@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { MapPin, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 import logo from "@/assets/logo.png";
+import LiveStatusBadge from "@/components/LiveStatusBadge";
 
 const HeroSection = () => {
   return (
@@ -71,13 +73,13 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <a
-            href="#contact"
+          <Link
+            to="/contact"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gold text-navy font-semibold font-body text-lg shadow-gold transition-all duration-300 hover:brightness-110 hover:scale-105"
           >
             <MapPin className="w-5 h-5" />
             Visit Today
-          </a>
+          </Link>
           <a
             href="tel:9917917437"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-gold/50 text-gold-light font-semibold font-body text-lg transition-all duration-300 hover:bg-gold/10 hover:scale-105"
@@ -87,15 +89,14 @@ const HeroSection = () => {
           </a>
         </motion.div>
 
-        {/* Open status badge */}
+        {/* Live status badge */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-12 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[hsl(140,60%,40%,0.2)] border border-[hsl(140,60%,40%,0.3)]"
+          className="mt-12"
         >
-          <span className="w-2.5 h-2.5 rounded-full bg-[hsl(140,60%,45%)] animate-pulse" />
-          <span className="text-[hsl(140,60%,70%)] font-body text-sm font-medium">Open Daily · 6:00 AM – 8:00 PM</span>
+          <LiveStatusBadge />
         </motion.div>
       </div>
     </section>
