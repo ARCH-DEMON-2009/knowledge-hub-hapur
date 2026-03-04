@@ -1,5 +1,15 @@
 import { Heart, MapPin, Phone, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
+
+const footerLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Facilities", href: "/facilities" },
+  { label: "Rules", href: "/rules" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact", href: "/contact" },
+];
 
 const Footer = () => {
   return (
@@ -8,7 +18,6 @@ const Footer = () => {
       
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
               <img src={logo} alt="Janhitkari Library Logo" className="w-10 h-10 object-contain" />
@@ -22,24 +31,22 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="font-display text-cream font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              {["Home", "About", "Facilities", "Rules", "FAQ", "Contact"].map((link) => (
-                <li key={link}>
-                  <a
-                    href={`#${link.toLowerCase()}`}
+              {footerLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
                     className="font-body text-cream/50 text-sm hover:text-gold transition-colors"
                   >
-                    {link}
-                  </a>
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h4 className="font-display text-cream font-semibold mb-4">Contact</h4>
             <ul className="space-y-3">
