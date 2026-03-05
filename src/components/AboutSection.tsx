@@ -64,7 +64,7 @@ const AboutSection = () => {
             </div>
             <div className="absolute -bottom-6 -left-6 bg-navy rounded-xl p-6 shadow-gold">
               <p className="font-display text-gold-light text-lg font-semibold">"Empowering Knowledge<br/>for Everyone"</p>
-              <p className="font-body text-cream/60 text-sm mt-2">— Bijander Kumar, Founder</p>
+              <p className="font-body text-cream/70 text-sm mt-2">— Bijander Kumar, Founder</p>
             </div>
           </motion.div>
         </div>

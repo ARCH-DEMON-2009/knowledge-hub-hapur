@@ -65,7 +65,7 @@ const TestimonialsSection = () => {
           className="max-w-2xl mx-auto text-center"
         >
           <Quote className="w-10 h-10 text-gold/30 mx-auto mb-6" />
-          <p className="font-body text-cream/80 text-lg md:text-xl leading-relaxed mb-6">
+          <p className="font-body text-cream/90 text-lg md:text-xl leading-relaxed mb-6">
             "{t.message}"
           </p>
           <div className="flex items-center justify-center gap-1 mb-3">
@@ -78,7 +78,7 @@ const TestimonialsSection = () => {
           </div>
           <p className="font-display text-lg font-semibold text-cream">{t.student_name}</p>
           {t.course && (
-            <p className="font-body text-cream/50 text-sm mt-1">{t.course}</p>
+            <p className="font-body text-cream/65 text-sm mt-1">{t.course}</p>
           )}
 
           {testimonials.length > 1 && (

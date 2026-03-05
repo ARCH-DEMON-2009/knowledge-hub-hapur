@@ -53,7 +53,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="font-body text-lg md:text-xl text-cream/80 max-w-2xl mx-auto mb-4"
+          className="font-body text-lg md:text-xl text-cream/90 max-w-2xl mx-auto mb-4"
         >
           A peaceful, disciplined, and fully equipped study space in Ramgarhi — 100% free for every student.
         </motion.p>
@@ -62,7 +62,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="font-body text-base text-cream/60 max-w-xl mx-auto mb-10"
+          className="font-body text-base text-cream/75 max-w-xl mx-auto mb-10"
         >
           Whether you're preparing for competitive exams or building daily study discipline, Janhitkari Library provides the environment you need to succeed.
         </motion.p>

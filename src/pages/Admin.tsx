@@ -84,7 +84,7 @@ const Admin = () => {
           <div className="text-center mb-6">
             <Lock className="w-12 h-12 text-gold mx-auto mb-3" />
             <h1 className="font-display text-2xl font-bold text-cream">Admin Panel</h1>
-            <p className="font-body text-cream/50 text-sm mt-1">Janhitkari Library</p>
+            <p className="font-body text-cream/60 text-sm mt-1">Janhitkari Library</p>
           </div>
           <input
             type="password"
@@ -92,7 +92,7 @@ const Admin = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-            className="w-full px-4 py-3 rounded-lg bg-[hsl(222,60%,14%)] border border-[hsl(var(--gold),0.2)] text-cream font-body placeholder:text-cream/30 focus:outline-none focus:border-gold mb-3"
+            className="w-full px-4 py-3 rounded-lg bg-[hsl(222,60%,14%)] border border-[hsl(var(--gold)/0.3)] text-cream font-body placeholder:text-cream/40 focus:outline-none focus:border-gold mb-3"
           />
           {error && <p className="text-[hsl(0,80%,60%)] text-sm font-body mb-3">{error}</p>}
           <button
@@ -119,7 +119,7 @@ const Admin = () => {
       <header className="bg-navy shadow-navy">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="font-display text-xl font-bold text-cream">Admin Panel</h1>
-          <button onClick={handleLogout} className="flex items-center gap-2 text-cream/60 hover:text-cream font-body text-sm">
+          <button onClick={handleLogout} className="flex items-center gap-2 text-cream/70 hover:text-cream font-body text-sm">
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </div>
@@ -192,19 +192,19 @@ const StatusPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<any
           <div>
             <label className="font-body text-sm text-muted-foreground block mb-1">Opening Time</label>
             <input value={status.opening_time} onChange={(e) => setStatus({ ...status, opening_time: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground" />
           </div>
           <div>
             <label className="font-body text-sm text-muted-foreground block mb-1">Closing Time</label>
             <input value={status.closing_time} onChange={(e) => setStatus({ ...status, closing_time: e.target.value })}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground" />
           </div>
         </div>
 
         <div>
           <label className="font-body text-sm text-muted-foreground block mb-1">Special Message</label>
           <input value={status.special_message || ""} onChange={(e) => setStatus({ ...status, special_message: e.target.value })}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm" placeholder="e.g. Closed for Holi" />
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground" placeholder="e.g. Closed for Holi" />
         </div>
 
         <button onClick={save} disabled={saving}
