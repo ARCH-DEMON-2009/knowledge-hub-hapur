@@ -28,7 +28,7 @@ const FreeSection = () => {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-cream mb-4">
             100% Free for <span className="text-gradient-gold">Everyone</span>
           </h2>
-          <p className="font-body text-cream/70 text-lg max-w-xl mx-auto">
+          <p className="font-body text-cream text-lg max-w-xl mx-auto opacity-90">
             We believe education should never be limited by money. Just walk in, follow the rules, and start studying.
           </p>
         </motion.div>
@@ -46,7 +46,7 @@ const FreeSection = () => {
                 <item.icon className="w-7 h-7 text-gold" />
               </div>
               <h3 className="font-display text-lg font-semibold text-cream mb-2">{item.title}</h3>
-              <p className="font-body text-cream/70 text-sm">{item.desc}</p>
+              <p className="font-body text-cream text-sm opacity-80">{item.desc}</p>
             </motion.div>
           ))}
         </div>
