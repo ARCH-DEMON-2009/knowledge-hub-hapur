@@ -262,7 +262,7 @@ const CrudPanel = ({ adminFetch, table, fields }: { adminFetch: (body: object) =
                 <select
                   value={newItem[field] !== undefined ? String(newItem[field]) : "true"}
                   onChange={(e) => setNewItem({ ...newItem, [field]: e.target.value === "true" })}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
                 >
                   <option value="true">Yes</option>
                   <option value="false">No</option>
@@ -272,20 +272,20 @@ const CrudPanel = ({ adminFetch, table, fields }: { adminFetch: (body: object) =
                   type="number" min="1" max="5"
                   value={newItem[field] || ""}
                   onChange={(e) => setNewItem({ ...newItem, [field]: parseInt(e.target.value) })}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
                 />
               ) : field === "date" ? (
                 <input
                   type="date"
                   value={newItem[field] || ""}
                   onChange={(e) => setNewItem({ ...newItem, [field]: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
                 />
               ) : (
                 <input
                   value={newItem[field] || ""}
                   onChange={(e) => setNewItem({ ...newItem, [field]: e.target.value })}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
                   placeholder={field.replace("_", " ")}
                 />
               )}
@@ -326,7 +326,7 @@ const CrudPanel = ({ adminFetch, table, fields }: { adminFetch: (body: object) =
                           {item[f] ? "Yes" : "No"}
                         </button>
                       ) : (
-                        <span className="text-navy font-medium">{String(item[f] ?? "—")}</span>
+                        <span className="text-foreground font-medium">{String(item[f] ?? "—")}</span>
                       )}
                     </div>
                   ))}
@@ -386,13 +386,13 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
           <input
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
             placeholder="Image URL (paste Supabase storage URL or external URL)"
           />
           <input
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm"
+            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
             placeholder="Caption (optional)"
           />
           <button onClick={add} className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gold text-navy font-semibold font-body text-sm hover:brightness-110">
