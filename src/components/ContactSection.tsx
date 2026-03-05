@@ -20,7 +20,7 @@ const ContactSection = () => {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-cream mb-4">
             Get in Touch
           </h2>
-          <p className="font-body text-cream/60 text-lg">Take the first step toward your success. Your seat is waiting.</p>
+          <p className="font-body text-cream/75 text-lg">Take the first step toward your success. Your seat is waiting.</p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
@@ -60,7 +60,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <p className="font-body text-cream font-medium">Address</p>
-                    <p className="font-body text-cream/60 text-sm">Ramgarhi, Hapur, Uttar Pradesh, India</p>
+                    <p className="font-body text-cream/75 text-sm">Ramgarhi, Hapur, Uttar Pradesh, India</p>
                     <a
                       href="https://share.google/zTAHnakvLx83Ms3PY"
                       target="_blank"
@@ -104,7 +104,7 @@ const ContactSection = () => {
                 <span className="font-body text-[hsl(140,60%,70%)] font-medium">Open Now</span>
               </div>
               <p className="font-display text-2xl font-bold text-cream">6:00 AM – 8:00 PM</p>
-              <p className="font-body text-cream/50 text-sm mt-1">Open Daily · 365 Days a Year</p>
+              <p className="font-body text-cream/70 text-sm mt-1">Open Daily · 365 Days a Year</p>
             </div>
           </motion.div>
         </div>

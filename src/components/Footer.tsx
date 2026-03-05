@@ -26,7 +26,7 @@ const Footer = () => {
                 <span className="font-body text-xs text-gold-light">Empowering Knowledge for Everyone</span>
               </div>
             </div>
-            <p className="font-body text-cream/50 text-sm leading-relaxed">
+            <p className="font-body text-cream/70 text-sm leading-relaxed">
               Founded by Bijander Kumar. A completely free and disciplined study library for every student in Hapur.
             </p>
           </div>
@@ -38,7 +38,7 @@ const Footer = () => {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="font-body text-cream/50 text-sm hover:text-gold transition-colors"
+                    className="font-body text-cream/70 text-sm hover:text-gold transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -52,22 +52,22 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span className="font-body text-cream/50 text-sm">Ramgarhi, Hapur, UP, India</span>
+                <span className="font-body text-cream/70 text-sm">Ramgarhi, Hapur, UP, India</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-gold shrink-0" />
-                <a href="tel:9917917437" className="font-body text-cream/50 text-sm hover:text-gold transition-colors">9917917437</a>
+                <a href="tel:9917917437" className="font-body text-cream/70 text-sm hover:text-gold transition-colors">9917917437</a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-gold shrink-0" />
-                <a href="mailto:bijanderk3@gmail.com" className="font-body text-cream/50 text-sm hover:text-gold transition-colors">bijanderk3@gmail.com</a>
+                <a href="mailto:bijanderk3@gmail.com" className="font-body text-cream/70 text-sm hover:text-gold transition-colors">bijanderk3@gmail.com</a>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-[hsl(var(--gold),0.1)] pt-8 text-center">
-          <p className="font-body text-cream/40 text-sm">
+          <p className="font-body text-cream/60 text-sm">
             © {new Date().getFullYear()} Janhitkari Library. All rights reserved. Made with{" "}
             <Heart className="w-3 h-3 inline text-[hsl(0,80%,60%)]" /> for education.
           </p>
