@@ -26,7 +26,7 @@ const RulesSection = () => {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-cream mb-4">
             Library Rules
           </h2>
-          <p className="font-body text-cream/75 text-lg">A disciplined environment benefits everyone.</p>
+          <p className="font-body text-cream text-lg opacity-85">A disciplined environment benefits everyone.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
@@ -42,7 +42,7 @@ const RulesSection = () => {
                 <rule.icon className="w-8 h-8 text-gold" />
               </div>
               <h3 className="font-display text-xl font-semibold text-cream mb-3">{rule.title}</h3>
-              <p className="font-body text-cream/75 text-sm leading-relaxed">{rule.desc}</p>
+              <p className="font-body text-cream text-sm leading-relaxed opacity-85">{rule.desc}</p>
             </motion.div>
           ))}
         </div>
