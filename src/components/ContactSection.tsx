@@ -20,7 +20,7 @@ const ContactSection = () => {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-cream mb-4">
             Get in Touch
           </h2>
-          <p className="font-body text-cream/75 text-lg">Take the first step toward your success. Your seat is waiting.</p>
+          <p className="font-body text-cream text-lg opacity-85">Take the first step toward your success. Your seat is waiting.</p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto">
