@@ -37,8 +37,11 @@ Deno.serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
 
-      case "list":
-        result = await supabase.from(table).select("*").order("created_at", { ascending: false });
+      case "list": {
+        const orderCol = table === "library_status" ? "updated_at" : "created_at";
+        result = await supabase.from(table).select("*").order(orderCol, { ascending: false });
+        break;
+      }
         break;
 
       case "insert":
