@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Lock, LogOut, ToggleLeft, ToggleRight, Calendar, Megaphone,
@@ -343,12 +343,14 @@ const CrudPanel = ({ adminFetch, table, fields }: { adminFetch: (body: object) =
   );
 };
 
-// Gallery Panel with URL-based upload
+// Gallery Panel with file upload to Supabase Storage
 const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState("");
   const [caption, setCaption] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -359,16 +361,46 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
 
   useEffect(() => { load(); }, [load]);
 
-  const add = async () => {
-    if (!imageUrl) return;
-    await adminFetch({
-      action: "insert",
-      table: "gallery",
-      data: { image_url: imageUrl, caption: caption || null, sort_order: items.length },
-    });
-    setImageUrl("");
-    setCaption("");
-    load();
+  const uploadFile = async (file: File) => {
+    if (!file || !file.type.startsWith("image/")) return;
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(",")[1]);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      await adminFetch({
+        action: "upload_gallery_image",
+        data: {
+          base64,
+          fileName: file.name,
+          contentType: file.type,
+          caption: caption || null,
+        },
+      });
+      setCaption("");
+      load();
+    } catch (err) {
+      console.error("Upload failed:", err);
+    }
+    setUploading(false);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file);
   };
 
   const remove = async (id: string) => {
@@ -380,24 +412,39 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
     <div className="space-y-6">
       <div className="glass rounded-xl p-6 shadow-soft">
         <h3 className="font-display text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <Plus className="w-5 h-5" /> Add Image
+          <Plus className="w-5 h-5" /> Upload Image
         </h3>
         <div className="space-y-3">
-          <input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
-            placeholder="Image URL (paste Supabase storage URL or external URL)"
-          />
           <input
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
             placeholder="Caption (optional)"
           />
-          <button onClick={add} className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gold text-navy font-semibold font-body text-sm hover:brightness-110">
-            <Plus className="w-4 h-4" /> Add Image
-          </button>
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
+              dragOver
+                ? "border-gold bg-[hsl(var(--gold)/0.08)]"
+                : "border-border hover:border-gold/50 hover:bg-[hsl(var(--gold)/0.03)]"
+            }`}
+          >
+            <Image className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <p className="font-body text-sm text-muted-foreground">
+              {uploading ? "Uploading..." : "Drag & drop an image or click to select"}
+            </p>
+            <p className="font-body text-xs text-muted-foreground/60 mt-1">JPG, PNG, WebP supported</p>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
         </div>
       </div>
 
@@ -408,10 +455,12 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
         </div>
         {loading ? (
           <p className="font-body text-muted-foreground text-sm">Loading...</p>
+        ) : items.length === 0 ? (
+          <p className="font-body text-muted-foreground text-sm">No images yet. Upload one above!</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {items.map((img) => (
-              <div key={img.id} className="relative group rounded-lg overflow-hidden">
+              <div key={img.id} className="relative group rounded-xl overflow-hidden shadow-soft border border-border">
                 <img src={img.image_url} alt={img.caption || "Gallery"} className="w-full h-40 object-cover" />
                 <div className="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={() => remove(img.id)} className="p-2 bg-[hsl(0,80%,50%)] rounded-lg text-cream">
