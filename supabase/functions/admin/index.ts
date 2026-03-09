@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { decode } from "https://deno.land/std@0.208.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,7 +43,6 @@ Deno.serve(async (req) => {
         result = await supabase.from(table).select("*").order(orderCol, { ascending: false });
         break;
       }
-        break;
 
       case "insert":
         result = await supabase.from(table).insert(data).select();
@@ -56,8 +56,41 @@ Deno.serve(async (req) => {
         result = await supabase.from(table).delete().eq("id", id);
         break;
 
+      case "upload_gallery_image": {
+        const { base64, fileName, contentType, caption } = data;
+        const fileBytes = decode(base64);
+        const filePath = `${crypto.randomUUID()}-${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("gallery")
+          .upload(filePath, fileBytes, { contentType, upsert: false });
+
+        if (uploadError) {
+          return new Response(JSON.stringify({ error: uploadError.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("gallery")
+          .getPublicUrl(filePath);
+
+        // Get current count for sort_order
+        const { count } = await supabase
+          .from("gallery")
+          .select("*", { count: "exact", head: true });
+
+        result = await supabase.from("gallery").insert({
+          image_url: urlData.publicUrl,
+          caption: caption || null,
+          sort_order: count || 0,
+        }).select();
+
+        break;
+      }
+
       case "upsert_status": {
-        // Get existing status or create one
         const { data: existing } = await supabase
           .from("library_status")
           .select("*")
