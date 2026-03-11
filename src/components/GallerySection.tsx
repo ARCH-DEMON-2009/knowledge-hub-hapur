@@ -8,6 +8,8 @@ interface GalleryImage {
   id: string;
   image_url: string;
   caption: string | null;
+  sort_order: number;
+  created_at: string;
 }
 
 const GallerySection = () => {
@@ -15,18 +17,47 @@ const GallerySection = () => {
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [failedIds, setFailedIds] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    supabase
-      .from("gallery")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .then(({ data }) => {
-        if (data) setImages(data);
-      });
+    let isMounted = true;
+
+    const loadGallery = async () => {
+      const { data, error } = await supabase
+        .from("gallery")
+        .select("id, image_url, caption, sort_order, created_at")
+        .order("sort_order", { ascending: true });
+
+      if (error) {
+        console.error("Failed to load gallery:", error.message);
+      }
+
+      if (isMounted) {
+        setImages(data || []);
+        setLoading(false);
+      }
+    };
+
+    loadGallery();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  if (images.length === 0) return null;
+  const withCacheVersion = (url: string, version: string) => {
+    try {
+      const parsed = new URL(url);
+      parsed.searchParams.set("v", version);
+      return parsed.toString();
+    } catch {
+      const joiner = url.includes("?") ? "&" : "?";
+      return `${url}${joiner}v=${encodeURIComponent(version)}`;
+    }
+  };
+
+  if (loading || images.length === 0) return null;
 
   return (
     <section className="py-24 bg-cream relative" ref={ref}>
@@ -61,8 +92,7 @@ const GallerySection = () => {
               className="break-inside-avoid mb-5 cursor-pointer group"
               onClick={() => setSelectedImage(img)}
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-soft group-hover:shadow-gold transition-all duration-500 border border-transparent group-hover:border-[hsl(var(--gold)/0.25)]">
-                {/* Hover overlay with zoom icon */}
+              <div className="relative rounded-2xl overflow-hidden shadow-soft group-hover:shadow-gold transition-all duration-500 border border-transparent group-hover:border-[hsl(var(--gold)/0.25)] bg-muted">
                 <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/30 transition-all duration-500 z-10 flex items-center justify-center">
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
@@ -75,12 +105,19 @@ const GallerySection = () => {
                   </motion.div>
                 </div>
 
-                <img
-                  src={img.image_url}
-                  alt={img.caption || "Janhitkari Library gallery image"}
-                  className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                  loading="lazy"
-                />
+                {failedIds[img.id] ? (
+                  <div className="w-full min-h-56 flex items-center justify-center p-4 text-center">
+                    <p className="font-body text-sm text-muted-foreground">Image failed to load.</p>
+                  </div>
+                ) : (
+                  <img
+                    src={withCacheVersion(img.image_url, img.created_at)}
+                    alt={img.caption || "Janhitkari Library gallery image"}
+                    className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    loading="lazy"
+                    onError={() => setFailedIds((prev) => ({ ...prev, [img.id]: true }))}
+                  />
+                )}
 
                 {img.caption && (
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-navy/80 via-navy/40 to-transparent p-4 pt-10 z-20">
@@ -93,7 +130,6 @@ const GallerySection = () => {
         </div>
       </div>
 
-      {/* Lightbox */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
@@ -121,7 +157,7 @@ const GallerySection = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={selectedImage.image_url}
+                src={withCacheVersion(selectedImage.image_url, selectedImage.created_at)}
                 alt={selectedImage.caption || "Gallery image"}
                 className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
               />
@@ -144,3 +180,4 @@ const GallerySection = () => {
 };
 
 export default GallerySection;
+

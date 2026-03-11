@@ -350,50 +350,72 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [orderDirty, setOrderDirty] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     const { data } = await adminFetch({ action: "list", table: "gallery" });
-    setItems(data || []);
+    const sorted = (data || []).sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    setItems(sorted);
+    setOrderDirty(false);
     setLoading(false);
   }, [adminFetch]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const uploadFile = async (file: File) => {
-    if (!file || !file.type.startsWith("image/")) return;
+    if (!file || !file.type.startsWith("image/")) {
+      setUploadError("Please upload a valid image file.");
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      setUploadError("Image is too large. Maximum allowed size is 20MB.");
+      return;
+    }
+
+    setUploadError("");
     setUploading(true);
+
     try {
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          resolve(result.split(",")[1]);
-        };
-        reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("action", "upload_gallery_image");
+      formData.append("caption", caption);
+      formData.append("file", file);
+
+      const res = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "x-admin-password": sessionStorage.getItem("admin_pw") || "",
+        },
+        body: formData,
       });
 
-      await adminFetch({
-        action: "upload_gallery_image",
-        data: {
-          base64,
-          fileName: file.name,
-          contentType: file.type,
-          caption: caption || null,
-        },
-      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload.error || "Upload failed");
+      }
+
       setCaption("");
-      load();
+      await load();
     } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
       console.error("Upload failed:", err);
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) uploadFile(file);
+    e.target.value = "";
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -403,9 +425,42 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
     if (file) uploadFile(file);
   };
 
+  const handleDragOverCard = (targetId: string, e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    if (!draggingId || draggingId === targetId) return;
+
+    setItems((prev) => {
+      const fromIndex = prev.findIndex((item) => item.id === draggingId);
+      const toIndex = prev.findIndex((item) => item.id === targetId);
+
+      if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return prev;
+
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+
+    setOrderDirty(true);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    try {
+      await adminFetch({
+        action: "reorder_gallery",
+        data: items.map((img, index) => ({ id: img.id, sort_order: index })),
+      });
+      await load();
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
   const remove = async (id: string) => {
-    await adminFetch({ action: "delete", table: "gallery", id });
-    load();
+    await adminFetch({ action: "delete_gallery_image", id });
+    await load();
   };
 
   return (
@@ -422,7 +477,10 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
             placeholder="Caption (optional)"
           />
           <div
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
@@ -445,14 +503,31 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
             onChange={handleFileSelect}
             className="hidden"
           />
+          {uploadError && <p className="font-body text-sm text-destructive">{uploadError}</p>}
         </div>
       </div>
 
       <div className="glass rounded-xl p-6 shadow-soft">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3 gap-3">
           <h3 className="font-display text-lg font-bold text-navy">Gallery ({items.length})</h3>
-          <button onClick={load} className="text-muted-foreground hover:text-navy"><RefreshCw className="w-4 h-4" /></button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={saveOrder}
+              disabled={!orderDirty || savingOrder}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gold text-navy font-body text-xs font-semibold disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              {savingOrder ? "Saving..." : "Save Order"}
+            </button>
+            <button onClick={load} className="text-muted-foreground hover:text-navy">
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
         </div>
+        <p className="font-body text-xs text-muted-foreground mb-4">
+          Drag cards to reorder. Public gallery follows this saved order.
+        </p>
+
         {loading ? (
           <p className="font-body text-muted-foreground text-sm">Loading...</p>
         ) : items.length === 0 ? (
@@ -460,14 +535,39 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {items.map((img) => (
-              <div key={img.id} className="relative group rounded-xl overflow-hidden shadow-soft border border-border">
-                <img src={img.image_url} alt={img.caption || "Gallery"} className="w-full h-40 object-cover" />
-                <div className="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={() => remove(img.id)} className="p-2 bg-[hsl(0,80%,50%)] rounded-lg text-cream">
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+              <div
+                key={img.id}
+                draggable
+                onDragStart={() => setDraggingId(img.id)}
+                onDragEnd={() => setDraggingId(null)}
+                onDragOver={(e) => handleDragOverCard(img.id, e)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setDraggingId(null);
+                }}
+                className={`relative group rounded-xl overflow-hidden shadow-soft border border-border bg-card ${
+                  draggingId === img.id ? "opacity-60 ring-2 ring-gold/50" : ""
+                }`}
+              >
+                <img src={img.image_url} alt={img.caption || "Gallery"} className="w-full h-40 object-cover bg-muted" />
+
+                <div className="absolute top-2 left-2 px-2 py-1 rounded bg-background/85 text-foreground text-xs font-body cursor-grab active:cursor-grabbing">
+                  ↕ Drag
                 </div>
-                {img.caption && <p className="absolute bottom-0 left-0 right-0 bg-navy/70 text-cream text-xs p-2 font-body">{img.caption}</p>}
+
+                <button
+                  onClick={() => remove(img.id)}
+                  className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Delete image"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+
+                {img.caption && (
+                  <p className="absolute bottom-0 left-0 right-0 bg-navy/70 text-cream text-xs p-2 font-body truncate">
+                    {img.caption}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -478,3 +578,4 @@ const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<an
 };
 
 export default Admin;
+
