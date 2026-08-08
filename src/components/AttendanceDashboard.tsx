@@ -495,21 +495,83 @@ const AttendanceHistory = ({ adminFetch, exportToExcel, exportToCSV, exportToPDF
 
 const AuditLogs = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
     const [logs, setLogs] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterAction, setFilterAction] = useState("all");
+
     useEffect(() => {
         adminFetch({ action: "list", table: "audit_logs" }).then(({ data }) => setLogs(data || []));
     }, []);
 
+    const filteredLogs = logs.filter(log => {
+        const matchesSearch = 
+            log.action.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            (log.reason && log.reason.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (log.actor_type && log.actor_type.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const matchesAction = filterAction === "all" || log.action === filterAction;
+        
+        return matchesSearch && matchesAction;
+    });
+
+    const uniqueActions = Array.from(new Set(logs.map(l => l.action)));
+
     return (
-        <div className="space-y-3">
-            {logs.map(log => (
-                <div key={log.id} className="glass p-4 rounded-xl border-l-4 border-navy shadow-soft flex justify-between items-center">
-                    <div>
-                        <p className="text-sm font-bold text-navy font-body uppercase">{log.action.replace('_', ' ')}</p>
-                        <p className="text-xs text-muted-foreground font-body">{log.reason || "System action"}</p>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground font-body">{formatTime(log.timestamp)} {formatDate(log.timestamp)}</p>
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 bg-white p-3 rounded-xl border border-border">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input 
+                        type="text"
+                        placeholder="Search audit logs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-sm font-body border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy/5 focus:border-navy"
+                    />
                 </div>
-            ))}
+                <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <select 
+                        value={filterAction}
+                        onChange={(e) => setFilterAction(e.target.value)}
+                        className="pl-9 pr-8 py-2 text-sm font-body border border-border rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-navy/5 focus:border-navy"
+                    >
+                        <option value="all">All Actions</option>
+                        {uniqueActions.map(action => (
+                            <option key={action} value={action}>{action.replace('_', ' ').toUpperCase()}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <AnimatePresence mode="popLayout">
+                    {filteredLogs.map(log => (
+                        <motion.div 
+                            layout
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            key={log.id} 
+                            className="glass p-4 rounded-xl border-l-4 border-navy shadow-soft flex justify-between items-center"
+                        >
+                            <div>
+                                <p className="text-sm font-bold text-navy font-body uppercase">{log.action.replace('_', ' ')}</p>
+                                <p className="text-xs text-muted-foreground font-body">{log.reason || "System action"}</p>
+                                {log.actor_type && (
+                                    <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded mt-1 inline-block uppercase font-bold">Actor: {log.actor_type}</span>
+                                )}
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[10px] text-muted-foreground font-body">{formatTime(log.timestamp)}</p>
+                                <p className="text-[10px] text-muted-foreground font-body font-bold">{formatDate(log.timestamp)}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                    {filteredLogs.length === 0 && (
+                        <div className="text-center py-10 text-muted-foreground italic font-body">No matching audit logs found.</div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 };
