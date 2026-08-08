@@ -9,7 +9,7 @@ import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import SEO from "@/components/SEO";
-import SupabaseTester from "@/components/SupabaseTester";
+
 
 const libraryJsonLd = {
   "@context": "https://schema.org",
@@ -56,7 +56,7 @@ const Index = () => {
       <WhyUsSection />
       <ClosingSection />
       <Footer />
-      <SupabaseTester />
+
     </div>
   );
 };
