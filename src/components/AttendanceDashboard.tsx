@@ -104,7 +104,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
                     <p className="text-sm text-muted-foreground font-body mb-4">
                         Download full attendance history as a professional Excel file for records and reporting.
                     </p>
-                    <button onClick={exportToExcel} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
+                    <button onClick={() => exportToExcel()} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
                         Generate Excel Report
                     </button>
                 </div>
