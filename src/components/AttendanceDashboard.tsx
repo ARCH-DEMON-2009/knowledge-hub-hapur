@@ -364,6 +364,7 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
                 </tbody>
             </table>
         </div>
+      </div>
     );
 };
 
