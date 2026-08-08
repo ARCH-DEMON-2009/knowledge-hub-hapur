@@ -15,6 +15,7 @@ const allowedTables = new Set([
   "announcements",
   "gallery",
   "testimonials",
+  "visitor_logs",
 ]);
 
 const jsonResponse = (body: unknown, status = 200) =>
