@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { 
   Users, Clock, LogIn, LogOut, BookOpen, UserCheck, 
-  FileDown, QrCode, ShieldAlert, History, Activity
+  FileDown, QrCode, ShieldAlert, History, Activity, FileSpreadsheet, FileText, Search, Filter
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import QRCode from "react-qr-code";
 import { formatTime, formatDate } from "@/lib/attendance-utils";
 
