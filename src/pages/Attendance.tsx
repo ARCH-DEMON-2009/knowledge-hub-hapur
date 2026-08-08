@@ -418,7 +418,7 @@ const AttendancePage = () => {
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  delay={0.2}
+                  transition={{ delay: 0.2 }}
                   className="bg-navy/40 border border-gold/20 rounded-2xl p-6 text-left space-y-4"
                 >
                   <div className="flex justify-between items-start border-b border-gold/10 pb-3">
