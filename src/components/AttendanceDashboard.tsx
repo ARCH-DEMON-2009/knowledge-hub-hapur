@@ -300,7 +300,8 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
     }, []);
 
     return (
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h3 className="font-display text-xl font-bold text-navy">Attendance History</h3>
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                 <input 
