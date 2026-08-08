@@ -53,14 +53,14 @@ const Navbar = () => {
       )}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          showTransparent ? (announcement ? "mt-9 bg-transparent py-4" : "bg-transparent py-4") : "bg-white/95 backdrop-blur-md shadow-soft py-2"
+          showTransparent ? (announcement ? "mt-9 bg-transparent py-4" : "bg-transparent py-4") : "bg-white/98 backdrop-blur-xl shadow-lg py-2 border-b border-gold/10"
         }`}
       >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="Janhitkari Library Logo" className="h-10 w-10 object-contain" />
           <div>
-            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy drop-shadow-sm"}`}>
+            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"}`}>
               Janhitkari Library
             </span>
             <span className={`text-xs font-body ${showTransparent ? "text-gold-light" : "text-gold-dark"}`}>
@@ -76,8 +76,8 @@ const Navbar = () => {
                 to={item.href}
                 className={`px-4 py-2 rounded-lg text-sm font-medium font-body transition-all duration-300 hover:bg-accent/20 ${
                   location.pathname === item.href
-                    ? showTransparent ? "text-gold-light" : "text-gold-dark font-semibold"
-                    : showTransparent ? "text-cream hover:text-gold-light" : "text-navy hover:text-gold-dark"
+                    ? showTransparent ? "text-gold-light" : "text-gold-dark font-bold bg-gold/5"
+                    : showTransparent ? "text-cream hover:text-gold-light" : "text-navy hover:text-gold-dark font-medium"
                 }`}
               >
                 {item.label}
