@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCurrentlyInside, setIsCurrentlyInside] = useState(false);
   const [stats, setStats] = useState({
     totalSessions: 0,
     totalMinutes: 0,
