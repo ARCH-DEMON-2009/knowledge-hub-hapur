@@ -280,8 +280,8 @@ const AttendancePage = () => {
               <button type="button" onClick={() => setMode("choice")} className="text-gold flex items-center gap-2 text-sm font-body"><ArrowLeft className="w-4 h-4"/> Back</button>
               <h2 className="font-display text-2xl font-bold text-cream">Member Login</h2>
               <div className="space-y-4">
-                <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} icon={Smartphone} />
-                <Input label="Password" type="password" value={password} onChange={setPassword} icon={ShieldCheck} />
+                <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} icon={Smartphone} placeholder="Enter mobile" />
+                <Input label="Password" type="password" value={password} onChange={setPassword} icon={ShieldCheck} placeholder="Enter password" />
               </div>
               <button disabled={loading} className="w-full py-4 bg-gold text-navy font-bold rounded-2xl disabled:opacity-50">
                 {loading ? "Authenticating..." : "Login & Continue"}
