@@ -202,7 +202,8 @@ const AttendancePage = () => {
                 <Input label="Father's Name" value={fatherName} onChange={setFatherName} />
                 <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} />
                 <Input label="Address" value={address} onChange={setAddress} />
-                <Input label="Create Password" type="password" value={password} onChange={setPassword} />
+                <Input label="Password" type="password" value={password} onChange={setPassword} />
+                <Input label="Confirm Password" type="password" value={password} onChange={setPassword} />
               </div>
               <button disabled={loading} className="w-full py-4 bg-gold text-navy font-bold rounded-2xl disabled:opacity-50">
                 {loading ? "Registering..." : "Create Account"}

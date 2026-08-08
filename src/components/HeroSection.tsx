@@ -85,7 +85,7 @@ const HeroSection = () => {
             className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-gold/50 text-gold-light font-semibold font-body text-lg transition-all duration-300 hover:bg-gold/10 hover:scale-105"
           >
             <Phone className="w-5 h-5" />
-            Call Now – 9917917437
+            Call Now — 9917917437
           </a>
         </motion.div>
 

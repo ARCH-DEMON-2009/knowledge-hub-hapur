@@ -23,10 +23,7 @@ const AboutSection = () => {
               About Janhitkari Library
             </h2>
             <p className="font-body text-muted-foreground text-lg mb-6 leading-relaxed">
-              Founded by <strong className="text-navy">Bijander Kumar</strong>, Janhitkari Library was created with one mission: to provide a completely free and disciplined study environment for every student in Hapur.
-            </p>
-            <p className="font-body text-muted-foreground mb-6 leading-relaxed">
-              Located in Ramgarhi, Hapur, Uttar Pradesh, the library serves as a peaceful learning hub where students can focus, grow, and prepare for their future without financial burden.
+              Founded by <strong className="text-navy">Bijander Kumar</strong>, Janhitkari Library was created with one mission: to provide a completely free and disciplined study environment for every student in Hapur. Located in Ramgarhi, Hapur, Uttar Pradesh, the library serves as a peaceful learning hub where students can focus, grow, and prepare for their future without financial burden.
             </p>
             <p className="font-body text-muted-foreground mb-8 leading-relaxed">
               There are no membership fees. No hidden charges. Just pure dedication to education.
@@ -64,7 +61,7 @@ const AboutSection = () => {
             </div>
             <div className="absolute -bottom-6 -left-6 bg-navy rounded-xl p-6 shadow-gold">
               <p className="font-display text-gold-light text-lg font-semibold">"Empowering Knowledge<br/>for Everyone"</p>
-              <p className="font-body text-cream/70 text-sm mt-2">— Bijander Kumar, Founder</p>
+              <p className="font-body text-cream/70 text-sm mt-2">Founder — By Bijander Kumar</p>
             </div>
           </motion.div>
         </div>
