@@ -14,7 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          title?: string
+        }
+        Relationships: []
+      }
+      closure_dates: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
+      gallery: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      library_status: {
+        Row: {
+          closing_time: string
+          id: string
+          is_open: boolean
+          opening_time: string
+          special_message: string | null
+          updated_at: string
+        }
+        Insert: {
+          closing_time?: string
+          id?: string
+          is_open?: boolean
+          opening_time?: string
+          special_message?: string | null
+          updated_at?: string
+        }
+        Update: {
+          closing_time?: string
+          id?: string
+          is_open?: boolean
+          opening_time?: string
+          special_message?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          course: string | null
+          created_at: string
+          id: string
+          is_visible: boolean
+          message: string
+          rating: number
+          student_name: string
+        }
+        Insert: {
+          course?: string | null
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          message: string
+          rating?: number
+          student_name: string
+        }
+        Update: {
+          course?: string | null
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          message?: string
+          rating?: number
+          student_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
