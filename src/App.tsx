@@ -13,6 +13,7 @@ import Rules from "./pages/Rules";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
+import Attendance from "./pages/Attendance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/library/attendance" element={<Attendance />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
