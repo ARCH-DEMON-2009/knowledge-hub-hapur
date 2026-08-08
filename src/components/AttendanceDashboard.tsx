@@ -300,10 +300,35 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
     }, []);
 
     return (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h3 className="font-display text-xl font-bold text-navy">Attendance History</h3>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <input 
+                    type="date" 
+                    id="history-date-filter"
+                    className="px-3 py-1.5 rounded-lg border border-border text-sm font-body bg-white"
+                />
+                <button 
+                    onClick={() => {
+                        const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                        if (!date) return;
+                        const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                        const ws = XLSX.utils.json_to_sheet(filtered);
+                        const wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, "Filtered_Attendance");
+                        XLSX.writeFile(wb, `Attendance_${date}.xlsx`);
+                    }}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
+                >
+                    <FileDown className="w-3.5 h-3.5" /> Export Date
+                </button>
+            </div>
+        </div>
         <div className="glass rounded-xl overflow-hidden shadow-soft">
             <table className="w-full text-left font-body text-sm">
                 <thead className="bg-navy text-cream">
                     <tr>
+                        <th className="px-4 py-3">Member</th>
                         <th className="px-4 py-3">Date</th>
                         <th className="px-4 py-3">Check-in</th>
                         <th className="px-4 py-3">Check-out</th>
@@ -314,7 +339,14 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
                 <tbody className="divide-y divide-border">
                     {history.map((h) => (
                         <tr key={h.id} className="bg-card hover:bg-accent/5">
-                            <td className="px-4 py-3">{formatDate(h.check_in_time)}</td>
+                                <td className="px-4 py-3 font-medium text-navy cursor-pointer hover:underline" onClick={() => {
+                                    const filtered = history.filter(item => item.member_id === h.member_id);
+                                    const ws = XLSX.utils.json_to_sheet(filtered);
+                                    const wb = XLSX.utils.book_new();
+                                    XLSX.utils.book_append_sheet(wb, ws, "Member_History");
+                                    XLSX.writeFile(wb, `History_Member_${h.member_id.substring(0,8)}.xlsx`);
+                                }}>{h.member_id.substring(0,8)}...</td>
+                                <td className="px-4 py-3">{formatDate(h.check_in_time)}</td>
                             <td className="px-4 py-3">{formatTime(h.check_in_time)}</td>
                             <td className="px-4 py-3">{h.check_out_time ? formatTime(h.check_out_time) : "—"}</td>
                             <td className="px-4 py-3 font-semibold">{h.duration_minutes ? `${h.duration_minutes}m` : "—"}</td>
