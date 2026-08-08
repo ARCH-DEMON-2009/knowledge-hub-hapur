@@ -265,7 +265,7 @@ Deno.serve(async (req) => {
         result = await supabase
           .from("gallery")
           .insert({
-            image_url: urlData.publicUrl,
+            image_url: urlData.signedUrl,
             caption,
             sort_order: nextSortOrder,
           })
