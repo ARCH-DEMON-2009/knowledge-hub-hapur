@@ -38,6 +38,102 @@ export type Database = {
         }
         Relationships: []
       }
+      attendance: {
+        Row: {
+          check_in_time: string
+          check_out_time: string | null
+          checkout_reason: string | null
+          created_at: string
+          device_fingerprint: string | null
+          duration_minutes: number | null
+          id: string
+          member_id: string
+          qr_code_id: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          check_in_time?: string
+          check_out_time?: string | null
+          checkout_reason?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          duration_minutes?: number | null
+          id?: string
+          member_id: string
+          qr_code_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          check_in_time?: string
+          check_out_time?: string | null
+          checkout_reason?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          duration_minutes?: number | null
+          id?: string
+          member_id?: string
+          qr_code_id?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_qr_code_id_fkey"
+            columns: ["qr_code_id"]
+            isOneToOne: false
+            referencedRelation: "qr_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_type: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          reason: string | null
+          timestamp: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_type: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          reason?: string | null
+          timestamp?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_type?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          reason?: string | null
+          timestamp?: string
+        }
+        Relationships: []
+      }
       closure_dates: {
         Row: {
           created_at: string
@@ -56,6 +152,30 @@ export type Database = {
           date?: string
           id?: string
           reason?: string | null
+        }
+        Relationships: []
+      }
+      library_rules: {
+        Row: {
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string
         }
         Relationships: []
       }
@@ -83,6 +203,75 @@ export type Database = {
           opening_time?: string
           special_message?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      members: {
+        Row: {
+          address: string | null
+          created_at: string
+          device_fingerprint: string | null
+          father_name: string
+          full_name: string
+          id: string
+          mobile: string
+          password_hash: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          father_name: string
+          full_name: string
+          id?: string
+          mobile: string
+          password_hash: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          device_fingerprint?: string | null
+          father_name?: string
+          full_name?: string
+          id?: string
+          mobile?: string
+          password_hash?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qr_codes: {
+        Row: {
+          created_at: string
+          id: string
+          location_name: string | null
+          name: string
+          revoked_at: string | null
+          status: string | null
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_name?: string | null
+          name: string
+          revoked_at?: string | null
+          status?: string | null
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_name?: string | null
+          name?: string
+          revoked_at?: string | null
+          status?: string | null
+          token_hash?: string
         }
         Relationships: []
       }
