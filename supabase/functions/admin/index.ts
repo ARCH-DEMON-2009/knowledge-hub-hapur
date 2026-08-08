@@ -32,10 +32,14 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const password = req.headers.get("x-admin-password");
-  const adminPassword = Deno.env.get("ADMIN_PASSWORD");
+  const password = (req.headers.get("x-admin-password") ?? "").trim();
+  const adminPassword = (Deno.env.get("ADMIN_PASSWORD") ?? "").trim();
 
-  if (!password || password !== adminPassword) {
+  if (
+    !password ||
+    !adminPassword ||
+    password.toLowerCase() !== adminPassword.toLowerCase()
+  ) {
     return jsonResponse({ error: "Unauthorized" }, 401);
   }
 
