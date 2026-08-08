@@ -86,7 +86,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         
         <div className="flex gap-2">
           <button 
-            onClick={exportToExcel}
+            onClick={() => exportToExcel()}
             className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-all shadow-sm"
           >
             <FileDown className="w-3.5 h-3.5" /> Full Export
