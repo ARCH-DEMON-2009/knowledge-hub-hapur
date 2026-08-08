@@ -300,10 +300,10 @@ const AttendancePage = () => {
               
               <div className="space-y-2">
                 <h2 className="font-display text-2xl font-bold text-cream">Create Account</h2>
-                <p className="font-body text-xs text-cream/60">Fill details to start tracking your study hours</p>
+                <p className="font-body text-xs text-cream/70">Fill details to start tracking your study hours</p>
               </div>
 
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-6 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
                 <div className="grid grid-cols-1 gap-4">
                   <Input label="Full Name" value={fullName} onChange={setFullName} placeholder="e.g. Rahul Sharma" />
                   <Input label="Father's Name" value={fatherName} onChange={setFatherName} placeholder="e.g. Suresh Sharma" />
