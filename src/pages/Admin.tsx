@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Lock, LogOut, ToggleLeft, ToggleRight, Calendar, Megaphone,
-  Image, MessageSquare, Trash2, Plus, Save, RefreshCw, User
+  Image, MessageSquare, Trash2, Plus, Save, RefreshCw, User,
+  Activity, ShieldAlert, QrCode
 } from "lucide-react";
+import AttendanceDashboard from "@/components/AttendanceDashboard";
 
 const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
 const FUNCTION_URL = `https://${PROJECT_ID}.supabase.co/functions/v1/admin`;
@@ -12,7 +14,7 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "testimonials" | "visitors">("status");
+  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "testimonials" | "visitors" | "attendance">("status");
 
   const storedPassword = () => sessionStorage.getItem("admin_pw") || "";
 
@@ -108,11 +110,11 @@ const Admin = () => {
 
   const tabs = [
     { key: "status" as const, label: "Library Status", icon: ToggleLeft },
+    { key: "attendance" as const, label: "Attendance", icon: Activity },
+    { key: "visitors" as const, label: "Simple Logs", icon: User },
     { key: "closures" as const, label: "Closures", icon: Calendar },
     { key: "announcements" as const, label: "Announcements", icon: Megaphone },
-    
     { key: "testimonials" as const, label: "Testimonials", icon: MessageSquare },
-    { key: "visitors" as const, label: "Visitors", icon: User },
   ];
 
   return (
@@ -150,6 +152,7 @@ const Admin = () => {
         
         {tab === "testimonials" && <CrudPanel adminFetch={adminFetch} table="testimonials" fields={["student_name", "message", "course", "rating", "is_visible"]} />}
         {tab === "visitors" && <CrudPanel adminFetch={adminFetch} table="visitor_logs" fields={["student_name", "entry_time", "exit_time", "purpose"]} />}
+        {tab === "attendance" && <AttendanceDashboard adminFetch={adminFetch} />}
       </div>
     </div>
   );
