@@ -47,6 +47,7 @@ const ProfilePage = () => {
       if (error) throw error;
       setAttendance(data || []);
       calculateStats(data || []);
+      setIsCurrentlyInside((data || []).some(a => a.status === 'inside'));
     } catch (err: any) {
       toast({ variant: "destructive", title: "Error", description: err.message });
     } finally {
