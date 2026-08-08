@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import SEO from "@/components/SEO";
 
+
 const libraryJsonLd = {
   "@context": "https://schema.org",
   "@type": "Library",
@@ -55,6 +56,7 @@ const Index = () => {
       <WhyUsSection />
       <ClosingSection />
       <Footer />
+
     </div>
   );
 };
