@@ -245,7 +245,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         )}
 
         {activeTab === "qr" && <QRManager adminFetch={adminFetch} />}
-        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} exportToExcel={exportToExcel} />}
+        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} exportToExcel={exportToExcel} exportToCSV={exportToCSV} exportToPDF={exportToPDF} />}
         {activeTab === "audit" && <AuditLogs adminFetch={adminFetch} />}
       </div>
     </div>
