@@ -92,10 +92,14 @@ const AttendancePage = () => {
         .single();
 
       if (active) {
-        // Already inside: Check-out
-        const checkIn = new Date(active.check_in_time);
+        // If they already scanned "inside" TODAY, prevent duplicate check-in if somehow triggered,
+        // but here we automate check-out.
+        const checkInTime = new Date(active.check_in_time);
+        const now = new Date();
+        
+        // Automation: If scanned again on same day, it's a check-out
         const checkOut = new Date();
-        const duration = Math.round((checkOut.getTime() - checkIn.getTime()) / 60000);
+        const duration = Math.round((checkOut.getTime() - checkInTime.getTime()) / 60000);
 
         await supabase.from("attendance").update({
           check_out_time: checkOut.toISOString(),
@@ -109,10 +113,31 @@ const AttendancePage = () => {
           time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
         });
-        toast({ title: "Auto Check-out", description: "You have left the library. Goodbye!" });
+        toast({ title: "Check-out Recorded", description: "You have left the library. Goodbye!" });
         setMode("success");
       } else {
         // Outside: Check-in
+        // But first, verify they haven't ALREADY completed a session today (to avoid accidental double scans)
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const { data: alreadyDone } = await supabase
+          .from("attendance")
+          .select("id")
+          .eq("member_id", member.id)
+          .gte("check_in_time", today.toISOString())
+          .eq("status", "completed")
+          .maybeSingle();
+
+        if (alreadyDone) {
+          toast({ 
+            variant: "destructive", 
+            title: "Double Scan Detected", 
+            description: "You have already completed your study session for today. Contact admin if this is a mistake." 
+          });
+          return;
+        }
+
         await supabase.from("attendance").insert([{
           member_id: member.id,
           qr_code_id: qrId,
@@ -126,7 +151,7 @@ const AttendancePage = () => {
           time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
         });
-        toast({ title: "Auto Check-in", description: "Welcome to Janhitkari Library!" });
+        toast({ title: "Welcome!", description: "Check-in successful." });
         setMode("success");
       }
 

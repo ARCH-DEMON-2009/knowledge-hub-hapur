@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const [user, setUser] = useState<any>(null);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCurrentlyInside, setIsCurrentlyInside] = useState(false);
   const [stats, setStats] = useState({
     totalSessions: 0,
     totalMinutes: 0,
@@ -46,6 +47,7 @@ const ProfilePage = () => {
       if (error) throw error;
       setAttendance(data || []);
       calculateStats(data || []);
+      setIsCurrentlyInside((data || []).some(a => a.status === 'inside'));
     } catch (err: any) {
       toast({ variant: "destructive", title: "Error", description: err.message });
     } finally {
@@ -94,7 +96,16 @@ const ProfilePage = () => {
                 <User className="w-12 h-12 text-gold" />
               </div>
               <h1 className="font-display text-2xl font-bold text-cream">{user?.full_name}</h1>
-              <p className="font-body text-cream/60 text-sm mb-6">{user?.mobile}</p>
+              <p className="font-body text-cream/60 text-sm mb-2">{user?.mobile}</p>
+              
+              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-6 ${
+                isCurrentlyInside 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+              }`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${isCurrentlyInside ? 'bg-green-400 animate-pulse' : 'bg-slate-400'}`} />
+                {isCurrentlyInside ? 'Currently Inside' : 'Currently Outside'}
+              </div>
               
               <div className="flex gap-3">
                 <button 

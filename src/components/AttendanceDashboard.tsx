@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { 
   Users, Clock, LogIn, LogOut, BookOpen, UserCheck, 
-  FileDown, QrCode, ShieldAlert, History, Activity
+  FileDown, QrCode, ShieldAlert, History, Activity, FileSpreadsheet, FileText, Search, Filter
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import QRCode from "react-qr-code";
 import { formatTime, formatDate } from "@/lib/attendance-utils";
 
@@ -30,19 +32,91 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
       XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
       XLSX.writeFile(workbook, `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.xlsx`);
       
-      await adminFetch({ 
-        action: "insert", 
-        table: "audit_logs", 
-        data: { 
-          actor_type: "admin", 
-          action: "excel_export", 
-          entity_type: "attendance",
-          reason: customData ? "Filtered export" : "Full export"
-        } 
-      });
+      await logAudit("excel_export", customData ? "Filtered export" : "Full export");
     } catch (error) {
       console.error("Export failed", error);
     }
+  };
+
+  const exportToCSV = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const csv = XLSX.utils.sheet_to_csv(worksheet);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      await logAudit("csv_export", customData ? "Filtered export" : "Full export");
+    } catch (error) {
+      console.error("CSV Export failed", error);
+    }
+  };
+
+  const exportToPDF = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const doc = new jsPDF() as any;
+      
+      // Branding
+      doc.setFillColor(28, 43, 72); // Navy
+      doc.rect(0, 0, 210, 40, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.text("JANHITKARI PUBLIC LIBRARY", 105, 20, { align: "center" });
+      doc.setFontSize(10);
+      doc.text("Elite Study Center & Knowledge Hub", 105, 28, { align: "center" });
+      
+      doc.setTextColor(28, 43, 72);
+      doc.setFontSize(14);
+      doc.text(`Attendance Report: ${fileName || 'Full History'}`, 15, 50);
+      doc.setFontSize(10);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 57);
+
+      const tableData = dataToExport.map((row: any) => [
+        row.member_id.substring(0, 8),
+        formatDate(row.check_in_time),
+        formatTime(row.check_in_time),
+        row.check_out_time ? formatTime(row.check_out_time) : "-",
+        row.duration_minutes ? `${row.duration_minutes}m` : "-",
+        row.status.toUpperCase()
+      ]);
+
+      doc.autoTable({
+        startY: 65,
+        head: [['Member ID', 'Date', 'In Time', 'Out Time', 'Duration', 'Status']],
+        body: tableData,
+        headStyles: { fillColor: [28, 43, 72] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 65 }
+      });
+
+      doc.save(`${fileName || 'Janhitkari_Report'}_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      await logAudit("pdf_export", customData ? "Filtered export" : "Full export");
+    } catch (error) {
+      console.error("PDF Export failed", error);
+    }
+  };
+
+  const logAudit = async (action: string, reason: string) => {
+    await adminFetch({ 
+      action: "insert", 
+      table: "audit_logs", 
+      data: { 
+        actor_type: "admin", 
+        action, 
+        entity_type: "attendance",
+        reason
+      } 
+    });
   };
 
   const loadStats = async () => {
@@ -85,12 +159,29 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         </div>
         
         <div className="flex gap-2">
-          <button 
-            onClick={() => exportToExcel()}
-            className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-all shadow-sm"
-          >
-            <FileDown className="w-3.5 h-3.5" /> Full Export
-          </button>
+          <div className="flex bg-white rounded-lg shadow-sm border border-border p-1">
+            <button 
+              onClick={() => exportToExcel()}
+              title="Export to Excel"
+              className="p-1.5 hover:bg-green-50 text-green-700 rounded transition-colors"
+            >
+              <FileSpreadsheet className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => exportToCSV()}
+              title="Export to CSV"
+              className="p-1.5 hover:bg-blue-50 text-blue-700 rounded transition-colors"
+            >
+              <FileDown className="w-4 h-4" />
+            </button>
+            <button 
+              onClick={() => exportToPDF()}
+              title="Export to PDF"
+              className="p-1.5 hover:bg-red-50 text-red-700 rounded transition-colors"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -99,14 +190,25 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
             <div className="grid md:grid-cols-2 gap-6">
                 <div className="glass p-6 rounded-xl shadow-soft">
                     <h3 className="font-display font-bold text-navy mb-4 flex items-center gap-2">
-                        <FileDown className="w-5 h-5" /> Export Data
+                        <FileDown className="w-5 h-5" /> Export Data Hub
                     </h3>
-                    <p className="text-sm text-muted-foreground font-body mb-4">
-                        Download full attendance history as a professional Excel file for records and reporting.
+                    <p className="text-sm text-muted-foreground font-body mb-6">
+                        Download full attendance records in professional, branded formats for archival and reporting.
                     </p>
-                    <button onClick={() => exportToExcel()} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
-                        Generate Excel Report
-                    </button>
+                    <div className="grid grid-cols-3 gap-3">
+                        <button onClick={() => exportToExcel()} className="flex flex-col items-center gap-2 py-4 bg-white border border-green-200 text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all shadow-sm">
+                            <FileSpreadsheet className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">Excel</span>
+                        </button>
+                        <button onClick={() => exportToCSV()} className="flex flex-col items-center gap-2 py-4 bg-white border border-blue-200 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm">
+                            <FileDown className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">CSV</span>
+                        </button>
+                        <button onClick={() => exportToPDF()} className="flex flex-col items-center gap-2 py-4 bg-white border border-red-200 text-red-700 font-bold rounded-xl hover:bg-red-50 transition-all shadow-sm">
+                            <FileText className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">PDF</span>
+                        </button>
+                    </div>
                 </div>
                 <div className="glass p-6 rounded-xl shadow-soft flex items-center justify-center text-muted-foreground italic font-body">
                     Charts & Trends coming soon...
@@ -143,7 +245,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         )}
 
         {activeTab === "qr" && <QRManager adminFetch={adminFetch} />}
-        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} exportToExcel={exportToExcel} />}
+        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} exportToExcel={exportToExcel} exportToCSV={exportToCSV} exportToPDF={exportToPDF} />}
         {activeTab === "audit" && <AuditLogs adminFetch={adminFetch} />}
       </div>
     </div>
@@ -285,7 +387,12 @@ const QRManager = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> 
   );
 };
 
-const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: object) => Promise<any>, exportToExcel: (data?: any[], name?: string) => Promise<void> }) => {
+const AttendanceHistory = ({ adminFetch, exportToExcel, exportToCSV, exportToPDF }: { 
+    adminFetch: (body: object) => Promise<any>, 
+    exportToExcel: (data?: any[], name?: string) => Promise<void>,
+    exportToCSV: (data?: any[], name?: string) => Promise<void>,
+    exportToPDF: (data?: any[], name?: string) => Promise<void>
+}) => {
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -306,18 +413,44 @@ const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: o
                     id="history-date-filter"
                     className="px-3 py-1.5 rounded-lg border border-border text-sm font-body bg-white"
                 />
-                <button 
-                    onClick={() => {
-                        const dateInput = document.getElementById('history-date-filter') as HTMLInputElement;
-                        const date = dateInput.value;
-                        if (!date) return;
-                        const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
-                        exportToExcel(filtered, `Attendance_${date}`);
-                    }}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
-                >
-                    <FileDown className="w-3.5 h-3.5" /> Export Date
-                </button>
+                <div className="flex bg-white rounded-lg shadow-sm border border-border p-1">
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToExcel(filtered, `Attendance_${date}`);
+                        }}
+                        title="Excel Export"
+                        className="p-1.5 hover:bg-green-50 text-green-700 rounded transition-colors"
+                    >
+                        <FileSpreadsheet className="w-4 h-4" />
+                    </button>
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToCSV(filtered, `Attendance_${date}`);
+                        }}
+                        title="CSV Export"
+                        className="p-1.5 hover:bg-blue-50 text-blue-700 rounded transition-colors"
+                    >
+                        <FileDown className="w-4 h-4" />
+                    </button>
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToPDF(filtered, `Attendance_${date}`);
+                        }}
+                        title="PDF Export"
+                        className="p-1.5 hover:bg-red-50 text-red-700 rounded transition-colors"
+                    >
+                        <FileText className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
         </div>
         <div className="glass rounded-xl overflow-hidden shadow-soft">
@@ -362,21 +495,83 @@ const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: o
 
 const AuditLogs = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
     const [logs, setLogs] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterAction, setFilterAction] = useState("all");
+
     useEffect(() => {
         adminFetch({ action: "list", table: "audit_logs" }).then(({ data }) => setLogs(data || []));
     }, []);
 
+    const filteredLogs = logs.filter(log => {
+        const matchesSearch = 
+            log.action.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            (log.reason && log.reason.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (log.actor_type && log.actor_type.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const matchesAction = filterAction === "all" || log.action === filterAction;
+        
+        return matchesSearch && matchesAction;
+    });
+
+    const uniqueActions = Array.from(new Set(logs.map(l => l.action)));
+
     return (
-        <div className="space-y-3">
-            {logs.map(log => (
-                <div key={log.id} className="glass p-4 rounded-xl border-l-4 border-navy shadow-soft flex justify-between items-center">
-                    <div>
-                        <p className="text-sm font-bold text-navy font-body uppercase">{log.action.replace('_', ' ')}</p>
-                        <p className="text-xs text-muted-foreground font-body">{log.reason || "System action"}</p>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground font-body">{formatTime(log.timestamp)} {formatDate(log.timestamp)}</p>
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 bg-white p-3 rounded-xl border border-border">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <input 
+                        type="text"
+                        placeholder="Search audit logs..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-9 pr-4 py-2 text-sm font-body border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-navy/5 focus:border-navy"
+                    />
                 </div>
-            ))}
+                <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <select 
+                        value={filterAction}
+                        onChange={(e) => setFilterAction(e.target.value)}
+                        className="pl-9 pr-8 py-2 text-sm font-body border border-border rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-navy/5 focus:border-navy"
+                    >
+                        <option value="all">All Actions</option>
+                        {uniqueActions.map(action => (
+                            <option key={action} value={action}>{action.replace('_', ' ').toUpperCase()}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <AnimatePresence mode="popLayout">
+                    {filteredLogs.map(log => (
+                        <motion.div 
+                            layout
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            key={log.id} 
+                            className="glass p-4 rounded-xl border-l-4 border-navy shadow-soft flex justify-between items-center"
+                        >
+                            <div>
+                                <p className="text-sm font-bold text-navy font-body uppercase">{log.action.replace('_', ' ')}</p>
+                                <p className="text-xs text-muted-foreground font-body">{log.reason || "System action"}</p>
+                                {log.actor_type && (
+                                    <span className="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded mt-1 inline-block uppercase font-bold">Actor: {log.actor_type}</span>
+                                )}
+                            </div>
+                            <div className="text-right">
+                                <p className="text-[10px] text-muted-foreground font-body">{formatTime(log.timestamp)}</p>
+                                <p className="text-[10px] text-muted-foreground font-body font-bold">{formatDate(log.timestamp)}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                    {filteredLogs.length === 0 && (
+                        <div className="text-center py-10 text-muted-foreground italic font-body">No matching audit logs found.</div>
+                    )}
+                </AnimatePresence>
+            </div>
         </div>
     );
 };
