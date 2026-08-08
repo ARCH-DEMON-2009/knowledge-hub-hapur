@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   QrCode, UserPlus, LogIn, LogOut, ArrowRight, ArrowLeft, 
-  CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle
+  CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle, RefreshCw
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -195,18 +195,38 @@ const AttendancePage = () => {
 
           {mode === "register" && (
             <form onSubmit={handleRegister} className="space-y-6">
-              <button type="button" onClick={() => setMode("choice")} className="text-gold flex items-center gap-2 text-sm font-body"><ArrowLeft className="w-4 h-4"/> Back</button>
-              <h2 className="font-display text-2xl font-bold text-cream">New Registration</h2>
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto px-1">
-                <Input label="Full Name" value={fullName} onChange={setFullName} />
-                <Input label="Father's Name" value={fatherName} onChange={setFatherName} />
-                <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} />
-                <Input label="Address" value={address} onChange={setAddress} />
-                <Input label="Password" type="password" value={password} onChange={setPassword} />
-                <Input label="Confirm Password" type="password" value={password} onChange={setPassword} />
+              <div className="flex items-center justify-between mb-4">
+                <button type="button" onClick={() => setMode("choice")} className="text-gold flex items-center gap-2 text-sm font-body hover:text-gold-light transition-colors">
+                  <ArrowLeft className="w-4 h-4"/> Back
+                </button>
+                <span className="text-[10px] font-body text-cream/40 uppercase tracking-widest">Step 1/1</span>
               </div>
-              <button disabled={loading} className="w-full py-4 bg-gold text-navy font-bold rounded-2xl disabled:opacity-50">
-                {loading ? "Registering..." : "Create Account"}
+              
+              <div className="space-y-2">
+                <h2 className="font-display text-2xl font-bold text-cream">Create Account</h2>
+                <p className="font-body text-xs text-cream/60">Fill details to start tracking your study hours</p>
+              </div>
+
+              <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="grid grid-cols-1 gap-4">
+                  <Input label="Full Name" value={fullName} onChange={setFullName} placeholder="e.g. Rahul Sharma" />
+                  <Input label="Father's Name" value={fatherName} onChange={setFatherName} placeholder="e.g. Suresh Sharma" />
+                  <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} placeholder="10-digit number" icon={Smartphone} />
+                  <Input label="Address" value={address} onChange={setAddress} placeholder="Street, Colony, City" />
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input label="Password" type="password" value={password} onChange={setPassword} icon={ShieldCheck} />
+                    <Input label="Confirm" type="password" value={password} onChange={setPassword} />
+                  </div>
+                </div>
+              </div>
+
+              <button disabled={loading} className="w-full py-4 bg-gold text-navy font-bold rounded-2xl disabled:opacity-50 hover:brightness-110 shadow-gold transition-all flex items-center justify-center gap-2">
+                {loading ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>Complete Registration <ArrowRight className="w-5 h-5" /></>
+                )}
               </button>
             </form>
           )}
@@ -267,17 +287,18 @@ const AttendancePage = () => {
   );
 };
 
-const Input = ({ label, type = "text", value, onChange, icon: Icon }: any) => (
-  <div className="space-y-1">
-    <label className="block text-xs font-body font-semibold text-gold uppercase tracking-wider ml-1">{label}</label>
+const Input = ({ label, type = "text", value, onChange, icon: Icon, placeholder }: any) => (
+  <div className="space-y-1.5 group">
+    <label className="block text-[10px] font-body font-bold text-gold/80 uppercase tracking-widest ml-1 group-focus-within:text-gold transition-colors">{label}</label>
     <div className="relative">
-      {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />}
+      {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/40 group-focus-within:text-gold/70 transition-colors" />}
       <input 
         required
         type={type}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full ${Icon ? 'pl-10' : 'px-4'} py-3 rounded-xl bg-navy-light border border-gold/20 text-cream font-body focus:outline-none focus:border-gold transition-colors placeholder:text-cream/20`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-4'} py-3.5 rounded-xl bg-navy/40 border border-gold/10 text-cream font-body text-sm focus:outline-none focus:border-gold/50 focus:bg-navy/60 transition-all placeholder:text-cream/10`}
       />
     </div>
   </div>
