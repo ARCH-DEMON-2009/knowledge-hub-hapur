@@ -24,12 +24,15 @@ const jsonResponse = (body: unknown, status = 200) =>
   });
 
 const getGalleryPathFromUrl = (imageUrl: string) => {
-  const marker = "/storage/v1/object/public/gallery/";
-  const markerIndex = imageUrl.indexOf(marker);
+  const markers = [
+    "/storage/v1/object/public/gallery/",
+    "/storage/v1/object/sign/gallery/",
+  ];
+  const marker = markers.find((m) => imageUrl.includes(m));
 
-  if (markerIndex === -1) return null;
+  if (!marker) return null;
 
-  const rawPath = imageUrl.slice(markerIndex + marker.length).split("?")[0];
+  const rawPath = imageUrl.slice(imageUrl.indexOf(marker) + marker.length).split("?")[0];
 
   try {
     return decodeURIComponent(rawPath);
