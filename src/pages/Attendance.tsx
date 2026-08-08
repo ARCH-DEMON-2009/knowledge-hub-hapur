@@ -36,22 +36,99 @@ const AttendancePage = () => {
     // Initialize fingerprint
     FingerprintJS.load().then(fp => fp.get()).then(result => setFingerprint(result.visitorId));
 
-    // Validate token
-    if (token) {
-      supabase.from("qr_codes").select("id").eq("token_hash", token).eq("status", "active").single()
-        .then(({ data }) => {
-          if (data) setQrCodeId(data.id);
-          else toast({ variant: "destructive", title: "Invalid QR", description: "This QR code is invalid or revoked." });
-        });
-    }
+    // Handle token and auto-attendance
+    const processToken = async (activeToken: string, currentUser: any) => {
+      try {
+        setLoading(true);
+        // Validate QR Token
+        const { data: qrData, error: qrError } = await supabase
+          .from("qr_codes")
+          .select("id")
+          .eq("token_hash", activeToken)
+          .eq("status", "active")
+          .single();
+
+        if (qrError || !qrData) {
+          toast({ variant: "destructive", title: "Invalid QR", description: "This QR code is invalid or revoked." });
+          return;
+        }
+
+        setQrCodeId(qrData.id);
+
+        // If user is logged in, automate attendance
+        if (currentUser) {
+          await automateAttendance(qrData.id, currentUser);
+        }
+      } catch (err) {
+        console.error("Token processing error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     // Check existing session
-    const storedUser = localStorage.getItem("library_member");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedUserStr = localStorage.getItem("library_member");
+    const currentUser = storedUserStr ? JSON.parse(storedUserStr) : null;
+    
+    if (currentUser) {
+      setUser(currentUser);
       setMode("action");
     }
+
+    if (token) {
+      processToken(token, currentUser);
+    }
   }, [token]);
+
+  const automateAttendance = async (qrId: string, member: any) => {
+    try {
+      // Check for today's active visit
+      const { data: active } = await supabase
+        .from("attendance")
+        .select("*")
+        .eq("member_id", member.id)
+        .eq("status", "inside")
+        .single();
+
+      if (active) {
+        // Already inside: Check-out
+        const checkIn = new Date(active.check_in_time);
+        const checkOut = new Date();
+        const duration = Math.round((checkOut.getTime() - checkIn.getTime()) / 60000);
+
+        await supabase.from("attendance").update({
+          check_out_time: checkOut.toISOString(),
+          duration_minutes: duration,
+          status: "completed"
+        }).eq("id", active.id);
+
+        toast({ title: "Auto Check-out", description: "You have left the library. Goodbye!" });
+        setMode("success");
+      } else {
+        // Outside: Check-in
+        await supabase.from("attendance").insert([{
+          member_id: member.id,
+          qr_code_id: qrId,
+          device_fingerprint: fingerprint,
+          status: "inside"
+        }]);
+
+        toast({ title: "Auto Check-in", description: "Welcome to Janhitkari Library!" });
+        setMode("success");
+      }
+
+      // Log audit
+      await supabase.from("audit_logs").insert([{
+        actor_id: member.id,
+        actor_type: "member",
+        action: active ? "check_out" : "check_in",
+        entity_type: "attendance",
+        reason: `Automated QR Scan`
+      }]);
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Automation Failed", description: err.message });
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
