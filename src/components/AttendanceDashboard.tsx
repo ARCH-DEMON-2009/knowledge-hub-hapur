@@ -39,16 +39,14 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
     return () => clearInterval(interval);
   }, []);
 
-  const exportToExcel = async () => {
+  const exportToExcel = async (customData?: any[], fileName?: string) => {
     try {
-      const { data } = await adminFetch({ action: "list", table: "attendance" });
-      // Enhance data with member info if needed, or fetch joined data
-      const worksheet = XLSX.utils.json_to_sheet(data);
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-      XLSX.writeFile(workbook, `Janhitkari_Attendance_${new Date().toISOString().split('T')[0]}.xlsx`);
+      XLSX.writeFile(workbook, `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.xlsx`);
       
-      // Log export
       await adminFetch({ 
         action: "insert", 
         table: "audit_logs", 
@@ -56,7 +54,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
           actor_type: "admin", 
           action: "excel_export", 
           entity_type: "attendance",
-          reason: "Manual export"
+          reason: customData ? "Filtered export" : "Full export"
         } 
       });
     } catch (error) {
@@ -314,10 +312,7 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
                         const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
                         if (!date) return;
                         const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
-                        const ws = XLSX.utils.json_to_sheet(filtered);
-                        const wb = XLSX.utils.book_new();
-                        XLSX.utils.book_append_sheet(wb, ws, "Filtered_Attendance");
-                        XLSX.writeFile(wb, `Attendance_${date}.xlsx`);
+                        exportToExcel(filtered, `Attendance_${date}`);
                     }}
                     className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
                 >
