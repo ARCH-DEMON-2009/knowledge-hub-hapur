@@ -117,6 +117,27 @@ const AttendancePage = () => {
         setMode("success");
       } else {
         // Outside: Check-in
+        // But first, verify they haven't ALREADY completed a session today (to avoid accidental double scans)
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const { data: alreadyDone } = await supabase
+          .from("attendance")
+          .select("id")
+          .eq("member_id", member.id)
+          .gte("check_in_time", today.toISOString())
+          .eq("status", "completed")
+          .maybeSingle();
+
+        if (alreadyDone) {
+          toast({ 
+            variant: "destructive", 
+            title: "Double Scan Detected", 
+            description: "You have already completed your study session for today. Contact admin if this is a mistake." 
+          });
+          return;
+        }
+
         await supabase.from("attendance").insert([{
           member_id: member.id,
           qr_code_id: qrId,
@@ -130,7 +151,7 @@ const AttendancePage = () => {
           time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
         });
-        toast({ title: "Auto Check-in", description: "Welcome to Janhitkari Library!" });
+        toast({ title: "Welcome!", description: "Check-in successful." });
         setMode("success");
       }
 
