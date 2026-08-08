@@ -22,23 +22,6 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "inside" | "history" | "qr" | "audit">("overview");
 
-  const loadStats = async () => {
-    try {
-      const data = await adminFetch({ action: "get_attendance_stats" });
-      setStats(data);
-    } catch (error) {
-      console.error("Failed to load stats", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadStats();
-    const interval = setInterval(loadStats, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
-  }, []);
-
   const exportToExcel = async (customData?: any[], fileName?: string) => {
     try {
       const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
@@ -61,6 +44,24 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
       console.error("Export failed", error);
     }
   };
+
+  const loadStats = async () => {
+    try {
+      const data = await adminFetch({ action: "get_attendance_stats" });
+      setStats(data);
+    } catch (error) {
+      console.error("Failed to load stats", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStats();
+    const interval = setInterval(loadStats, 30000); // Refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
 
   if (loading) return <div className="p-8 text-center text-muted-foreground font-body">Loading Analytics...</div>;
 
