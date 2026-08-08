@@ -400,7 +400,7 @@ const Input = ({ label, type = "text", value, onChange, icon: Icon, placeholder 
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full ${Icon ? 'pl-11' : 'px-4'} py-3.5 rounded-xl bg-navy/40 border border-gold/10 text-cream font-body text-sm focus:outline-none focus:border-gold/50 focus:bg-navy/60 transition-all placeholder:text-cream/10`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-4'} py-3.5 rounded-xl bg-navy/60 border border-gold/30 text-cream font-body text-sm focus:outline-none focus:border-gold focus:bg-navy/80 transition-all placeholder:text-cream/30`}
       />
     </div>
   </div>
