@@ -271,13 +271,19 @@ const AttendancePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-navy flex flex-col">
+    <div className="min-h-screen bg-navy flex flex-col selection:bg-gold selection:text-navy">
       <Navbar />
-      <main className="flex-1 flex items-center justify-center p-4 py-20">
+      <main className="flex-1 flex items-center justify-center p-4 py-24 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-gold/5 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-gold/5 rounded-full blur-[120px]" />
+        </div>
+
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-navy w-full max-w-md rounded-3xl p-8 shadow-2xl border border-gold/20"
+          className="glass-navy w-full max-w-lg rounded-[2.5rem] p-10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-gold/20 relative z-10"
         >
           {mode === "choice" && (
             <div className="text-center space-y-6">
@@ -323,17 +329,19 @@ const AttendancePage = () => {
                 <p className="font-body text-xs text-cream/70">Fill details to start tracking your study hours</p>
               </div>
 
-              <div className="space-y-6 max-h-[55vh] overflow-y-auto pr-2 custom-scrollbar">
-                <div className="grid grid-cols-1 gap-4">
-                  <Input label="Full Name" value={fullName} onChange={setFullName} placeholder="e.g. Rahul Sharma" />
-                  <Input label="Father's Name" value={fatherName} onChange={setFatherName} placeholder="e.g. Suresh Sharma" />
-                  <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} placeholder="10-digit number" icon={Smartphone} />
-                  <Input label="Address" value={address} onChange={setAddress} placeholder="Street, Colony, City" />
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input label="Password" type="password" value={password} onChange={setPassword} icon={ShieldCheck} />
-                    <Input label="Confirm" type="password" value={password} onChange={setPassword} />
+              <div className="space-y-6 max-h-[50vh] overflow-y-auto pr-3 custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <Input label="Full Name" value={fullName} onChange={setFullName} placeholder="e.g. Rahul Sharma" />
                   </div>
+                  <div className="md:col-span-2">
+                    <Input label="Father's Name" value={fatherName} onChange={setFatherName} placeholder="e.g. Suresh Sharma" />
+                  </div>
+                  <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} placeholder="10-digit number" icon={Smartphone} />
+                  <Input label="Address" value={address} onChange={setAddress} placeholder="Colony, City" />
+                  
+                  <Input label="Password" type="password" value={password} onChange={setPassword} icon={ShieldCheck} />
+                  <Input label="Confirm" type="password" value={password} onChange={setPassword} />
                 </div>
               </div>
 
@@ -470,7 +478,7 @@ const Input = ({ label, type = "text", value, onChange, icon: Icon, placeholder 
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className={`w-full ${Icon ? 'pl-11' : 'px-4'} py-3.5 rounded-xl bg-navy/60 border border-gold/40 text-cream font-body text-sm focus:outline-none focus:border-gold focus:bg-navy/80 transition-all placeholder:text-cream/30 shadow-inner`}
+        className={`w-full ${Icon ? 'pl-11' : 'px-4'} py-4 rounded-2xl bg-navy/40 border border-gold/30 text-cream font-body text-sm focus:outline-none focus:border-gold focus:bg-navy/80 focus:ring-1 focus:ring-gold/20 transition-all placeholder:text-cream/20 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]`}
       />
     </div>
   </div>
