@@ -60,7 +60,7 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="Janhitkari Library Logo" className="h-10 w-10 object-contain" />
           <div>
-            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy drop-shadow-sm"}`}>
+            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"}`}>
               Janhitkari Library
             </span>
             <span className={`text-xs font-body ${showTransparent ? "text-gold-light" : "text-gold-dark"}`}>
