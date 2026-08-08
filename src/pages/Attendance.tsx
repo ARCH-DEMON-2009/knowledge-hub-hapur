@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
-  QrCode, UserPlus, LogIn, ArrowRight, ArrowLeft, 
+  QrCode, UserPlus, LogIn, LogOut, ArrowRight, ArrowLeft, 
   CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
