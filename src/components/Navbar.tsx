@@ -76,8 +76,8 @@ const Navbar = () => {
                 to={item.href}
                 className={`px-4 py-2 rounded-lg text-sm font-medium font-body transition-all duration-300 hover:bg-accent/20 ${
                   location.pathname === item.href
-                    ? showTransparent ? "text-gold-light" : "text-gold-dark font-semibold"
-                    : showTransparent ? "text-cream hover:text-gold-light" : "text-navy hover:text-gold-dark"
+                    ? showTransparent ? "text-gold-light" : "text-gold-dark font-bold bg-gold/5"
+                    : showTransparent ? "text-cream hover:text-gold-light" : "text-navy hover:text-gold-dark font-medium"
                 }`}
               >
                 {item.label}
