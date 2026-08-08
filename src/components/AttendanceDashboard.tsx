@@ -190,14 +190,25 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
             <div className="grid md:grid-cols-2 gap-6">
                 <div className="glass p-6 rounded-xl shadow-soft">
                     <h3 className="font-display font-bold text-navy mb-4 flex items-center gap-2">
-                        <FileDown className="w-5 h-5" /> Export Data
+                        <FileDown className="w-5 h-5" /> Export Data Hub
                     </h3>
-                    <p className="text-sm text-muted-foreground font-body mb-4">
-                        Download full attendance history as a professional Excel file for records and reporting.
+                    <p className="text-sm text-muted-foreground font-body mb-6">
+                        Download full attendance records in professional, branded formats for archival and reporting.
                     </p>
-                    <button onClick={() => exportToExcel()} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
-                        Generate Excel Report
-                    </button>
+                    <div className="grid grid-cols-3 gap-3">
+                        <button onClick={() => exportToExcel()} className="flex flex-col items-center gap-2 py-4 bg-white border border-green-200 text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all shadow-sm">
+                            <FileSpreadsheet className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">Excel</span>
+                        </button>
+                        <button onClick={() => exportToCSV()} className="flex flex-col items-center gap-2 py-4 bg-white border border-blue-200 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm">
+                            <FileDown className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">CSV</span>
+                        </button>
+                        <button onClick={() => exportToPDF()} className="flex flex-col items-center gap-2 py-4 bg-white border border-red-200 text-red-700 font-bold rounded-xl hover:bg-red-50 transition-all shadow-sm">
+                            <FileText className="w-6 h-6" />
+                            <span className="text-[10px] uppercase">PDF</span>
+                        </button>
+                    </div>
                 </div>
                 <div className="glass p-6 rounded-xl shadow-soft flex items-center justify-center text-muted-foreground italic font-body">
                     Charts & Trends coming soon...
