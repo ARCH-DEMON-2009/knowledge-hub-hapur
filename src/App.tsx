@@ -14,6 +14,7 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import Attendance from "./pages/Attendance";
+import Connect from "./pages/Connect";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/library/attendance" element={<Attendance />} />
+          <Route path="/connect" element={<Connect />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
