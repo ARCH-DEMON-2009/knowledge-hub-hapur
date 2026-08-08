@@ -45,6 +45,93 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
     }
   };
 
+  const AttendanceHistory = ({ historyData }: { historyData: any[] }) => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 className="font-display text-xl font-bold text-navy">Attendance History</h3>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <input 
+                    type="date" 
+                    id="history-date-filter"
+                    className="px-3 py-1.5 rounded-lg border border-border text-sm font-body bg-white"
+                />
+                <button 
+                    onClick={() => {
+                        const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                        if (!date) return;
+                        const filtered = historyData.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                        exportToExcel(filtered, `Attendance_${date}`);
+                    }}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
+                >
+                    <FileDown className="w-3.5 h-3.5" /> Export Date
+                </button>
+            </div>
+        </div>
+        <div className="glass rounded-xl overflow-hidden shadow-soft">
+            <table className="w-full text-left font-body text-sm">
+                <thead className="bg-navy text-cream">
+                    <tr>
+                        <th className="px-4 py-3">Member</th>
+                        <th className="px-4 py-3">Date</th>
+                        <th className="px-4 py-3">Check-in</th>
+                        <th className="px-4 py-3">Check-out</th>
+                        <th className="px-4 py-3">Duration</th>
+                        <th className="px-4 py-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                    {historyData.map((h) => (
+                        <tr key={h.id} className="bg-card hover:bg-accent/5">
+                                <td className="px-4 py-3 font-medium text-navy cursor-pointer hover:underline" onClick={() => {
+                                    const filtered = historyData.filter(item => item.member_id === h.member_id);
+                                    exportToExcel(filtered, `History_Member_${h.member_id.substring(0,8)}`);
+                                }}>{h.member_id.substring(0,8)}...</td>
+                                <td className="px-4 py-3">{formatDate(h.check_in_time)}</td>
+                            <td className="px-4 py-3">{formatTime(h.check_in_time)}</td>
+                            <td className="px-4 py-3">{h.check_out_time ? formatTime(h.check_out_time) : "—"}</td>
+                            <td className="px-4 py-3 font-semibold">{h.duration_minutes ? `${h.duration_minutes}m` : "—"}</td>
+                            <td className="px-4 py-3">
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                                    h.status === 'inside' ? 'bg-green-100 text-green-700' : 
+                                    h.status === 'completed' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
+                                }`}>
+                                    {h.status.replace('_', ' ')}
+                                </span>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+      </div>
+    );
+  };
+
+  const exportToExcel = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+      XLSX.writeFile(workbook, `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+      
+      await adminFetch({ 
+        action: "insert", 
+        table: "audit_logs", 
+        data: { 
+          actor_type: "admin", 
+          action: "excel_export", 
+          entity_type: "attendance",
+          reason: customData ? "Filtered export" : "Full export"
+        } 
+      });
+    } catch (error) {
+      console.error("Export failed", error);
+    }
+  };
+
   const loadStats = async () => {
     try {
       const data = await adminFetch({ action: "get_attendance_stats" });
