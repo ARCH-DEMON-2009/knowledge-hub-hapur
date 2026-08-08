@@ -31,14 +31,14 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        showTransparent ? "bg-transparent py-4" : "glass shadow-soft py-2"
+        showTransparent ? "bg-transparent py-4" : "bg-white/95 backdrop-blur-md shadow-soft py-2"
       }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="Janhitkari Library Logo" className="h-10 w-10 object-contain" />
           <div>
-            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy"}`}>
+            <span className={`font-display font-bold text-lg leading-tight block ${showTransparent ? "text-cream" : "text-navy drop-shadow-sm"}`}>
               Janhitkari Library
             </span>
             <span className={`text-xs font-body ${showTransparent ? "text-gold-light" : "text-gold-dark"}`}>
