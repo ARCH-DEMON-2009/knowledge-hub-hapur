@@ -240,9 +240,15 @@ Deno.serve(async (req) => {
           return jsonResponse({ error: uploadError.message }, 400);
         }
 
-        const { data: urlData } = supabase.storage
+        // Bucket is private (public buckets are blocked by workspace policy),
+        // so store a long-lived signed URL instead of a public URL.
+        const { data: urlData, error: signError } = await supabase.storage
           .from("gallery")
-          .getPublicUrl(filePath);
+          .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
+
+        if (signError || !urlData?.signedUrl) {
+          return jsonResponse({ error: signError?.message || "Failed to sign URL" }, 400);
+        }
 
         const { data: latest, error: latestError } = await supabase
           .from("gallery")
