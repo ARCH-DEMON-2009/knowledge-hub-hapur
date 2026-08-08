@@ -12,7 +12,7 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "gallery" | "testimonials">("status");
+  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "gallery" | "testimonials" | "visitors">("status");
 
   const storedPassword = () => sessionStorage.getItem("admin_pw") || "";
 
@@ -112,6 +112,7 @@ const Admin = () => {
     { key: "announcements" as const, label: "Announcements", icon: Megaphone },
     { key: "gallery" as const, label: "Gallery", icon: Image },
     { key: "testimonials" as const, label: "Testimonials", icon: MessageSquare },
+    { key: "visitors" as const, label: "Visitors", icon: User },
   ];
 
   return (
@@ -148,6 +149,7 @@ const Admin = () => {
         {tab === "announcements" && <CrudPanel adminFetch={adminFetch} table="announcements" fields={["title", "content", "is_active"]} />}
         {tab === "gallery" && <GalleryPanel adminFetch={adminFetch} />}
         {tab === "testimonials" && <CrudPanel adminFetch={adminFetch} table="testimonials" fields={["student_name", "message", "course", "rating", "is_visible"]} />}
+        {tab === "visitors" && <CrudPanel adminFetch={adminFetch} table="visitor_logs" fields={["student_name", "entry_time", "exit_time", "purpose"]} />}
       </div>
     </div>
   );

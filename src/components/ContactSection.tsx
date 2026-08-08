@@ -32,7 +32,7 @@ const ContactSection = () => {
             className="rounded-2xl overflow-hidden shadow-gold h-[350px] lg:h-auto"
           >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56003.23!2d77.74!3d28.73!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf5b7c0000001%3A0x1234567890abcdef!2sRamgarhi%2C%20Hapur%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.711846549216!2d77.7712345!3d28.7345678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf51e94444445%3A0x6446e1234567890!2sJanhitkari%20Library!5e0!3m2!1sen!2sin!4v1700000000000"
               width="100%"
               height="100%"
               style={{ border: 0, minHeight: 350 }}
@@ -62,7 +62,7 @@ const ContactSection = () => {
                     <p className="font-body text-cream font-medium">Address</p>
                     <p className="font-body text-cream/75 text-sm">Ramgarhi, Hapur, Uttar Pradesh, India</p>
                     <a
-                      href="https://share.google/zTAHnakvLx83Ms3PY"
+                      href="https://maps.app.goo.gl/HCMyBTFqQPfqboZi9"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 font-body text-gold text-sm mt-1 hover:underline"
