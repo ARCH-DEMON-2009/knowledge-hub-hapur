@@ -71,7 +71,6 @@ const Footer = () => {
           <p className="font-body text-cream text-sm opacity-70">
             © {new Date().getFullYear()} Janhitkari Library. All rights reserved.
           </p>
-          </p>
         </div>
       </div>
     </footer>
