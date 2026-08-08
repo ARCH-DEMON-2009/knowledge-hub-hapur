@@ -35,7 +35,7 @@ const AboutSection = () => {
             <div className="grid grid-cols-2 gap-4">
               {[
                 { number: "100%", label: "Free Access" },
-                { number: "14hrs", label: "Daily Hours" },
+                { number: "6 AM – 8 PM", label: "Daily Hours" },
                 { number: "365", label: "Days Open" },
                 { number: "0₹", label: "Membership Fee" },
               ].map((stat, i) => (

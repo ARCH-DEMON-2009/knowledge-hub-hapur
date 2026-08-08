@@ -101,7 +101,7 @@ const ContactSection = () => {
             <div className="glass-navy rounded-2xl p-6 text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[hsl(140,60%,45%)] animate-pulse" />
-                <span className="font-body text-[hsl(140,60%,70%)] font-medium">Open Now</span>
+                <span className="font-body text-[hsl(140,60%,70%)] font-medium uppercase">Open Now</span>
               </div>
               <p className="font-display text-2xl font-bold text-cream">6:00 AM – 8:00 PM</p>
               <p className="font-body text-cream/70 text-sm mt-1">Open Daily · 365 Days a Year</p>
