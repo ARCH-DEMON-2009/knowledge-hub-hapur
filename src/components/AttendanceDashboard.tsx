@@ -73,7 +73,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         <StatCard title="Total Members" value={stats?.totalMembers || 0} icon={Users} color="bg-blue-500" />
         <StatCard title="Inside Now" value={stats?.currentlyInsideCount || 0} icon={UserCheck} color="bg-green-500" />
         <StatCard title="Today's Check-ins" value={stats?.todayCheckIns || 0} icon={LogIn} color="bg-[hsl(45,80%,55%)]" />
-        <StatCard title="Study Hours" value={stats?.todayStudyHours || 0} icon={BookOpen} color="bg-purple-500" />
+        <StatCard title="Today's Study Hours" value={stats?.todayStudyHours || 0} icon={BookOpen} color="bg-purple-500" />
       </div>
 
       {/* Tabs */}
