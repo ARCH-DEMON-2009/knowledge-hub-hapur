@@ -14,6 +14,11 @@ const allowedTables = new Set([
   "announcements",
   "testimonials",
   "visitor_logs",
+  "members",
+  "qr_codes",
+  "attendance",
+  "audit_logs",
+  "library_rules",
 ]);
 
 const jsonResponse = (body: unknown, status = 200) =>
@@ -40,18 +45,11 @@ Deno.serve(async (req) => {
   );
 
   try {
-    const contentType = req.headers.get("content-type") || "";
-
-    let action = "";
-    let table = "";
-    let data: any = null;
-    let id = "";
-
     const body = await req.json();
-    action = body.action || "";
-    table = body.table || "";
-    data = body.data ?? null;
-    id = body.id || "";
+    const action = body.action || "";
+    const table = body.table || "";
+    const data = body.data ?? null;
+    const id = body.id || "";
 
     let result;
 
@@ -65,7 +63,12 @@ Deno.serve(async (req) => {
         }
 
         const query = supabase.from(table).select("*");
-        const orderCol = table === "library_status" ? "updated_at" : "created_at";
+        
+        let orderCol = "created_at";
+        if (table === "library_status") orderCol = "updated_at";
+        if (table === "library_rules") orderCol = "key";
+        if (table === "attendance") orderCol = "check_in_time";
+
         result = await query.order(orderCol, { ascending: false });
         break;
       }
@@ -114,6 +117,43 @@ Deno.serve(async (req) => {
             .select();
         }
         break;
+      }
+      
+      case "get_attendance_stats": {
+        // Today's stats in Asia/Kolkata
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        const { data: attendance } = await supabase
+          .from("attendance")
+          .select("*, members(full_name, father_name, mobile)")
+          .gte("check_in_time", startOfDay.toISOString());
+          
+        const { count: totalMembers } = await supabase
+          .from("members")
+          .select("*", { count: "exact", head: true });
+
+        const currentlyInside = attendance?.filter(a => a.status === "inside") || [];
+        const checkIns = attendance?.length || 0;
+        const checkOuts = attendance?.filter(a => a.status !== "inside").length || 0;
+        
+        let totalMinutes = 0;
+        attendance?.forEach(a => {
+            if (a.duration_minutes) totalMinutes += a.duration_minutes;
+            else if (a.status === "inside") {
+                const diff = (new Date().getTime() - new Date(a.check_in_time).getTime()) / 60000;
+                totalMinutes += diff;
+            }
+        });
+
+        return jsonResponse({
+          totalMembers,
+          currentlyInsideCount: currentlyInside.length,
+          todayCheckIns: checkIns,
+          todayCheckOuts: checkOuts,
+          todayStudyHours: Math.round(totalMinutes / 60 * 10) / 10,
+          currentlyInsideList: currentlyInside
+        });
       }
 
       default:
