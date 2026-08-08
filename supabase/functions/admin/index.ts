@@ -72,6 +72,7 @@ Deno.serve(async (req) => {
         if (table === "library_status") orderCol = "updated_at";
         if (table === "library_rules") orderCol = "key";
         if (table === "attendance") orderCol = "check_in_time";
+        if (table === "audit_logs") orderCol = "timestamp";
 
         result = await query.order(orderCol, { ascending: false });
         break;
