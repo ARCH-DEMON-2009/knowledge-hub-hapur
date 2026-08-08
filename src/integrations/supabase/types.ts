@@ -140,6 +140,30 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_logs: {
+        Row: {
+          created_at: string
+          entry_time: string
+          id: string
+          outgoing_time: string | null
+          visitor_name: string
+        }
+        Insert: {
+          created_at?: string
+          entry_time: string
+          id?: string
+          outgoing_time?: string | null
+          visitor_name: string
+        }
+        Update: {
+          created_at?: string
+          entry_time?: string
+          id?: string
+          outgoing_time?: string | null
+          visitor_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
