@@ -408,18 +408,44 @@ const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: o
                     id="history-date-filter"
                     className="px-3 py-1.5 rounded-lg border border-border text-sm font-body bg-white"
                 />
-                <button 
-                    onClick={() => {
-                        const dateInput = document.getElementById('history-date-filter') as HTMLInputElement;
-                        const date = dateInput.value;
-                        if (!date) return;
-                        const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
-                        exportToExcel(filtered, `Attendance_${date}`);
-                    }}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
-                >
-                    <FileDown className="w-3.5 h-3.5" /> Export Date
-                </button>
+                <div className="flex bg-white rounded-lg shadow-sm border border-border p-1">
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToExcel(filtered, `Attendance_${date}`);
+                        }}
+                        title="Excel Export"
+                        className="p-1.5 hover:bg-green-50 text-green-700 rounded transition-colors"
+                    >
+                        <FileSpreadsheet className="w-4 h-4" />
+                    </button>
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToCSV(filtered, `Attendance_${date}`);
+                        }}
+                        title="CSV Export"
+                        className="p-1.5 hover:bg-blue-50 text-blue-700 rounded transition-colors"
+                    >
+                        <FileDown className="w-4 h-4" />
+                    </button>
+                    <button 
+                        onClick={() => {
+                            const date = (document.getElementById('history-date-filter') as HTMLInputElement).value;
+                            if (!date) return;
+                            const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                            exportToPDF(filtered, `Attendance_${date}`);
+                        }}
+                        title="PDF Export"
+                        className="p-1.5 hover:bg-red-50 text-red-700 rounded transition-colors"
+                    >
+                        <FileText className="w-4 h-4" />
+                    </button>
+                </div>
             </div>
         </div>
         <div className="glass rounded-xl overflow-hidden shadow-soft">
