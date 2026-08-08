@@ -401,10 +401,53 @@ const AttendancePage = () => {
 
           {mode === "success" && (
             <div className="text-center space-y-6">
-              <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto" />
-              <h2 className="font-display text-3xl font-bold text-cream">Success!</h2>
-              <p className="font-body text-cream/80">Your attendance has been recorded on the library server.</p>
-              <button onClick={() => setMode("action")} className="w-full py-4 bg-navy-light text-cream font-bold rounded-2xl border border-gold/30">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", damping: 12 }}
+              >
+                <CheckCircle2 className="w-20 h-20 text-green-500 mx-auto" />
+              </motion.div>
+              
+              <div className="space-y-2">
+                <h2 className="font-display text-3xl font-bold text-cream">Success!</h2>
+                <p className="font-body text-cream/80">Your attendance has been recorded.</p>
+              </div>
+
+              {successData && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  delay={0.2}
+                  className="bg-navy/40 border border-gold/20 rounded-2xl p-6 text-left space-y-4"
+                >
+                  <div className="flex justify-between items-start border-b border-gold/10 pb-3">
+                    <div>
+                      <p className="text-[10px] text-gold font-bold uppercase tracking-widest">Member</p>
+                      <p className="text-cream font-display text-lg font-bold">{successData.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-gold font-bold uppercase tracking-widest">Status</p>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${successData.status === 'CHECKED IN' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {successData.status}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-[10px] text-gold font-bold uppercase tracking-widest flex items-center gap-1"><Clock className="w-3 h-3"/> Time</p>
+                      <p className="text-cream font-body text-sm">{successData.time}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-gold font-bold uppercase tracking-widest flex items-center gap-1"><Calendar className="w-3 h-3"/> Date</p>
+                      <p className="text-cream font-body text-sm">{successData.date}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <button onClick={() => setMode("action")} className="w-full py-4 bg-navy-light text-cream font-bold rounded-2xl border border-gold/30 hover:bg-navy transition-colors">
                 Return to Dashboard
               </button>
             </div>
