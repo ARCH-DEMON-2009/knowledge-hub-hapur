@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Lock, LogOut, ToggleLeft, ToggleRight, Calendar, Megaphone,
-  Image, MessageSquare, Trash2, Plus, Save, RefreshCw,
+  Image, MessageSquare, Trash2, Plus, Save, RefreshCw, User
 } from "lucide-react";
 
 const PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;

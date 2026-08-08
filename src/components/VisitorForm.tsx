@@ -16,7 +16,7 @@ const VisitorForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from("visitor_logs").insert([
+      const { error } = await supabase.from("visitor_logs" as any).insert([
         {
           student_name: name,
           purpose: purpose,
