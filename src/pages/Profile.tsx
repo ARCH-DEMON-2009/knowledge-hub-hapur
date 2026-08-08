@@ -96,7 +96,16 @@ const ProfilePage = () => {
                 <User className="w-12 h-12 text-gold" />
               </div>
               <h1 className="font-display text-2xl font-bold text-cream">{user?.full_name}</h1>
-              <p className="font-body text-cream/60 text-sm mb-6">{user?.mobile}</p>
+              <p className="font-body text-cream/60 text-sm mb-2">{user?.mobile}</p>
+              
+              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-6 ${
+                isCurrentlyInside 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+              }`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${isCurrentlyInside ? 'bg-green-400 animate-pulse' : 'bg-slate-400'}`} />
+                {isCurrentlyInside ? 'Currently Inside' : 'Currently Outside'}
+              </div>
               
               <div className="flex gap-3">
                 <button 
