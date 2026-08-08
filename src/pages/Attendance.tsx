@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { 
   QrCode, UserPlus, LogIn, LogOut, ArrowRight, ArrowLeft, 
   CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle, RefreshCw,
-  History
+  History, Calendar
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
