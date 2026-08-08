@@ -58,8 +58,19 @@ const GallerySection = () => {
   };
 
   if (loading) return (
-    <div className="py-24 bg-cream flex items-center justify-center min-h-[400px]">
-      <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+    <div className="py-24 bg-cream relative">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-16 animate-pulse">
+          <div className="h-4 w-20 bg-muted rounded mx-auto mb-4" />
+          <div className="h-10 w-64 bg-muted rounded mx-auto mb-4" />
+          <div className="h-4 w-48 bg-muted rounded mx-auto" />
+        </div>
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-5 max-w-6xl mx-auto">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <div key={n} className="break-inside-avoid mb-5 rounded-2xl bg-muted h-64 w-full animate-pulse" />
+          ))}
+        </div>
+      </div>
     </div>
   );
 
