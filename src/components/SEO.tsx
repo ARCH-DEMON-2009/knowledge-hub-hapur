@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://janhitkari-library-hapur.vercel.app";
+const SITE_URL = "https://janhitkari-library.shashanksv.com";
 const DEFAULT_IMAGE = "https://storage.googleapis.com/gpt-engineer-file-uploads/8e5rLwi05IUp3glqNPHnHEmvlvs2/social-images/social-1772549945810-e53c2bcd-d8b2-4569-9e5c-3f03cc51c8cc.webp";
 
 interface SEOProps {

@@ -17,7 +17,7 @@ const libraryJsonLd = {
   "@type": "Library",
   "name": "Janhitkari Library",
   "description": "A completely free study library in Ramgarhi, Hapur offering peaceful study areas, free Wi-Fi, computer lab, printing services, and competitive exam preparation environment.",
-  "url": "https://janhitkari-library-hapur.vercel.app/",
+  "url": "https://janhitkari-library.shashanksv.com/",
   "telephone": "+919917917437",
   "email": "bijanderk3@gmail.com",
   "address": {
