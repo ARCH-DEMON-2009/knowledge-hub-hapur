@@ -32,19 +32,91 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
       XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
       XLSX.writeFile(workbook, `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.xlsx`);
       
-      await adminFetch({ 
-        action: "insert", 
-        table: "audit_logs", 
-        data: { 
-          actor_type: "admin", 
-          action: "excel_export", 
-          entity_type: "attendance",
-          reason: customData ? "Filtered export" : "Full export"
-        } 
-      });
+      await logAudit("excel_export", customData ? "Filtered export" : "Full export");
     } catch (error) {
       console.error("Export failed", error);
     }
+  };
+
+  const exportToCSV = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const csv = XLSX.utils.sheet_to_csv(worksheet);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      await logAudit("csv_export", customData ? "Filtered export" : "Full export");
+    } catch (error) {
+      console.error("CSV Export failed", error);
+    }
+  };
+
+  const exportToPDF = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const doc = new jsPDF() as any;
+      
+      // Branding
+      doc.setFillColor(28, 43, 72); // Navy
+      doc.rect(0, 0, 210, 40, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.text("JANHITKARI PUBLIC LIBRARY", 105, 20, { align: "center" });
+      doc.setFontSize(10);
+      doc.text("Elite Study Center & Knowledge Hub", 105, 28, { align: "center" });
+      
+      doc.setTextColor(28, 43, 72);
+      doc.setFontSize(14);
+      doc.text(`Attendance Report: ${fileName || 'Full History'}`, 15, 50);
+      doc.setFontSize(10);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 57);
+
+      const tableData = dataToExport.map((row: any) => [
+        row.member_id.substring(0, 8),
+        formatDate(row.check_in_time),
+        formatTime(row.check_in_time),
+        row.check_out_time ? formatTime(row.check_out_time) : "-",
+        row.duration_minutes ? `${row.duration_minutes}m` : "-",
+        row.status.toUpperCase()
+      ]);
+
+      doc.autoTable({
+        startY: 65,
+        head: [['Member ID', 'Date', 'In Time', 'Out Time', 'Duration', 'Status']],
+        body: tableData,
+        headStyles: { fillColor: [28, 43, 72] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { top: 65 }
+      });
+
+      doc.save(`${fileName || 'Janhitkari_Report'}_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+      await logAudit("pdf_export", customData ? "Filtered export" : "Full export");
+    } catch (error) {
+      console.error("PDF Export failed", error);
+    }
+  };
+
+  const logAudit = async (action: string, reason: string) => {
+    await adminFetch({ 
+      action: "insert", 
+      table: "audit_logs", 
+      data: { 
+        actor_type: "admin", 
+        action, 
+        entity_type: "attendance",
+        reason
+      } 
+    });
   };
 
   const loadStats = async () => {
