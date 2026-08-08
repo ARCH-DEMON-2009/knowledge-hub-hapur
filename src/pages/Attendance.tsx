@@ -103,6 +103,12 @@ const AttendancePage = () => {
           status: "completed"
         }).eq("id", active.id);
 
+        setSuccessData({
+          name: member.full_name,
+          status: "LEFT LIBRARY",
+          time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+        });
         toast({ title: "Auto Check-out", description: "You have left the library. Goodbye!" });
         setMode("success");
       } else {
@@ -114,6 +120,12 @@ const AttendancePage = () => {
           status: "inside"
         }]);
 
+        setSuccessData({
+          name: member.full_name,
+          status: "CHECKED IN",
+          time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+        });
         toast({ title: "Auto Check-in", description: "Welcome to Janhitkari Library!" });
         setMode("success");
       }
