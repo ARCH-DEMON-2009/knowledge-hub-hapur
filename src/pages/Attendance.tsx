@@ -24,6 +24,7 @@ const AttendancePage = () => {
   const [loading, setLoading] = useState(false);
   const [fingerprint, setFingerprint] = useState("");
   const [qrCodeId, setQrCodeId] = useState<string | null>(null);
+  const [successData, setSuccessData] = useState<any>(null);
 
   // Form states
   const [mobile, setMobile] = useState("");
@@ -197,14 +198,11 @@ const AttendancePage = () => {
         // Check for active visit
         const { data: active } = await supabase.from("attendance").select("*").eq("member_id", user.id).eq("status", "inside").single();
         if (active) {
-            // Check if it's the same day. If so, don't allow double check-in
             const lastCheckIn = new Date(active.check_in_time);
             const today = new Date();
             if (lastCheckIn.toDateString() === today.toDateString()) {
                throw new Error("You are already checked in for today.");
             }
-            // If it's another day but somehow still 'inside', we should probably auto-close it 
-            // but for now just block it to maintain data integrity
             throw new Error("You have an open session from a previous day. Please contact admin.");
         }
 
@@ -228,6 +226,16 @@ const AttendancePage = () => {
           status: "completed"
         }).eq("id", active.id);
       }
+      
+      // Update local state with session info for confirmation screen
+      const statusLabel = type === "in" ? "CHECKED IN" : "LEFT LIBRARY";
+      setSuccessData({
+        name: user.full_name,
+        status: statusLabel,
+        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+      });
+      
       setMode("success");
       // Log audit
       await supabase.from("audit_logs").insert([{
@@ -235,7 +243,7 @@ const AttendancePage = () => {
         actor_type: "member",
         action: type === "in" ? "check_in" : "check_out",
         entity_type: "attendance",
-        reason: `Mobile scan: ${type}`
+        reason: `Manual scan: ${type}`
       }]);
     } catch (err: any) {
       toast({ variant: "destructive", title: "Failed", description: err.message });
