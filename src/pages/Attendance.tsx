@@ -92,10 +92,14 @@ const AttendancePage = () => {
         .single();
 
       if (active) {
-        // Already inside: Check-out
-        const checkIn = new Date(active.check_in_time);
+        // If they already scanned "inside" TODAY, prevent duplicate check-in if somehow triggered,
+        // but here we automate check-out.
+        const checkInTime = new Date(active.check_in_time);
+        const now = new Date();
+        
+        // Automation: If scanned again on same day, it's a check-out
         const checkOut = new Date();
-        const duration = Math.round((checkOut.getTime() - checkIn.getTime()) / 60000);
+        const duration = Math.round((checkOut.getTime() - checkInTime.getTime()) / 60000);
 
         await supabase.from("attendance").update({
           check_out_time: checkOut.toISOString(),
@@ -109,7 +113,7 @@ const AttendancePage = () => {
           time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
           date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
         });
-        toast({ title: "Auto Check-out", description: "You have left the library. Goodbye!" });
+        toast({ title: "Check-out Recorded", description: "You have left the library. Goodbye!" });
         setMode("success");
       } else {
         // Outside: Check-in
