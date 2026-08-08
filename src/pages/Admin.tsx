@@ -12,7 +12,7 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "gallery" | "testimonials" | "visitors">("status");
+  const [tab, setTab] = useState<"status" | "closures" | "announcements" | "testimonials" | "visitors">("status");
 
   const storedPassword = () => sessionStorage.getItem("admin_pw") || "";
 
@@ -110,7 +110,7 @@ const Admin = () => {
     { key: "status" as const, label: "Library Status", icon: ToggleLeft },
     { key: "closures" as const, label: "Closures", icon: Calendar },
     { key: "announcements" as const, label: "Announcements", icon: Megaphone },
-    { key: "gallery" as const, label: "Gallery", icon: Image },
+    
     { key: "testimonials" as const, label: "Testimonials", icon: MessageSquare },
     { key: "visitors" as const, label: "Visitors", icon: User },
   ];
@@ -147,7 +147,7 @@ const Admin = () => {
         {tab === "status" && <StatusPanel adminFetch={adminFetch} />}
         {tab === "closures" && <CrudPanel adminFetch={adminFetch} table="closure_dates" fields={["date", "reason"]} />}
         {tab === "announcements" && <CrudPanel adminFetch={adminFetch} table="announcements" fields={["title", "content", "is_active"]} />}
-        {tab === "gallery" && <GalleryPanel adminFetch={adminFetch} />}
+        
         {tab === "testimonials" && <CrudPanel adminFetch={adminFetch} table="testimonials" fields={["student_name", "message", "course", "rating", "is_visible"]} />}
         {tab === "visitors" && <CrudPanel adminFetch={adminFetch} table="visitor_logs" fields={["student_name", "entry_time", "exit_time", "purpose"]} />}
       </div>
@@ -345,239 +345,6 @@ const CrudPanel = ({ adminFetch, table, fields }: { adminFetch: (body: object) =
   );
 };
 
-// Gallery Panel with file upload to Supabase Storage
-const GalleryPanel = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [caption, setCaption] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-  const [orderDirty, setOrderDirty] = useState(false);
-  const [savingOrder, setSavingOrder] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    const { data } = await adminFetch({ action: "list", table: "gallery" });
-    const sorted = (data || []).sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-    setItems(sorted);
-    setOrderDirty(false);
-    setLoading(false);
-  }, [adminFetch]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const uploadFile = async (file: File) => {
-    if (!file || !file.type.startsWith("image/")) {
-      setUploadError("Please upload a valid image file.");
-      return;
-    }
-
-    if (file.size > 20 * 1024 * 1024) {
-      setUploadError("Image is too large. Maximum allowed size is 20MB.");
-      return;
-    }
-
-    setUploadError("");
-    setUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("action", "upload_gallery_image");
-      formData.append("caption", caption);
-      formData.append("file", file);
-
-      const res = await fetch(FUNCTION_URL, {
-        method: "POST",
-        headers: {
-          "x-admin-password": sessionStorage.getItem("admin_pw") || "",
-        },
-        body: formData,
-      });
-
-      const payload = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(payload.error || "Upload failed");
-      }
-
-      setCaption("");
-      await load();
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload failed");
-      console.error("Upload failed:", err);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) uploadFile(file);
-    e.target.value = "";
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) uploadFile(file);
-  };
-
-  const handleDragOverCard = (targetId: string, e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (!draggingId || draggingId === targetId) return;
-
-    setItems((prev) => {
-      const fromIndex = prev.findIndex((item) => item.id === draggingId);
-      const toIndex = prev.findIndex((item) => item.id === targetId);
-
-      if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return prev;
-
-      const next = [...prev];
-      const [moved] = next.splice(fromIndex, 1);
-      next.splice(toIndex, 0, moved);
-      return next;
-    });
-
-    setOrderDirty(true);
-  };
-
-  const saveOrder = async () => {
-    setSavingOrder(true);
-    try {
-      await adminFetch({
-        action: "reorder_gallery",
-        data: items.map((img, index) => ({ id: img.id, sort_order: index })),
-      });
-      await load();
-    } finally {
-      setSavingOrder(false);
-    }
-  };
-
-  const remove = async (id: string) => {
-    await adminFetch({ action: "delete_gallery_image", id });
-    await load();
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="glass rounded-xl p-6 shadow-soft">
-        <h3 className="font-display text-lg font-bold text-navy mb-4 flex items-center gap-2">
-          <Plus className="w-5 h-5" /> Upload Image
-        </h3>
-        <div className="space-y-3">
-          <input
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-border bg-card font-body text-sm text-foreground"
-            placeholder="Caption (optional)"
-          />
-          <div
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
-              dragOver
-                ? "border-gold bg-[hsl(var(--gold)/0.08)]"
-                : "border-border hover:border-gold/50 hover:bg-[hsl(var(--gold)/0.03)]"
-            }`}
-          >
-            <Image className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="font-body text-sm text-muted-foreground">
-              {uploading ? "Uploading..." : "Drag & drop an image or click to select"}
-            </p>
-            <p className="font-body text-xs text-muted-foreground/60 mt-1">JPG, PNG, WebP supported</p>
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          {uploadError && <p className="font-body text-sm text-destructive">{uploadError}</p>}
-        </div>
-      </div>
-
-      <div className="glass rounded-xl p-6 shadow-soft">
-        <div className="flex items-center justify-between mb-3 gap-3">
-          <h3 className="font-display text-lg font-bold text-navy">Gallery ({items.length})</h3>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={saveOrder}
-              disabled={!orderDirty || savingOrder}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gold text-navy font-body text-xs font-semibold disabled:opacity-50"
-            >
-              <Save className="w-4 h-4" />
-              {savingOrder ? "Saving..." : "Save Order"}
-            </button>
-            <button onClick={load} className="text-muted-foreground hover:text-navy">
-              <RefreshCw className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-        <p className="font-body text-xs text-muted-foreground mb-4">
-          Drag cards to reorder. Public gallery follows this saved order.
-        </p>
-
-        {loading ? (
-          <p className="font-body text-muted-foreground text-sm">Loading...</p>
-        ) : items.length === 0 ? (
-          <p className="font-body text-muted-foreground text-sm">No images yet. Upload one above!</p>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {items.map((img) => (
-              <div
-                key={img.id}
-                draggable
-                onDragStart={() => setDraggingId(img.id)}
-                onDragEnd={() => setDraggingId(null)}
-                onDragOver={(e) => handleDragOverCard(img.id, e)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDraggingId(null);
-                }}
-                className={`relative group rounded-xl overflow-hidden shadow-soft border border-border bg-card ${
-                  draggingId === img.id ? "opacity-60 ring-2 ring-gold/50" : ""
-                }`}
-              >
-                <img src={img.image_url} alt={img.caption || "Gallery"} className="w-full h-40 object-cover bg-muted" />
-
-                <div className="absolute top-2 left-2 px-2 py-1 rounded bg-background/85 text-foreground text-xs font-body cursor-grab active:cursor-grabbing">
-                  ↕ Drag
-                </div>
-
-                <button
-                  onClick={() => remove(img.id)}
-                  className="absolute top-2 right-2 p-2 bg-destructive text-destructive-foreground rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  aria-label="Delete image"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-
-                {img.caption && (
-                  <p className="absolute bottom-0 left-0 right-0 bg-navy/70 text-cream text-xs p-2 font-body truncate">
-                    {img.caption}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 export default Admin;
+
 
