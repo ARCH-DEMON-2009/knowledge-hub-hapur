@@ -387,7 +387,12 @@ const QRManager = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> 
   );
 };
 
-const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: object) => Promise<any>, exportToExcel: (data?: any[], name?: string) => Promise<void> }) => {
+const AttendanceHistory = ({ adminFetch, exportToExcel, exportToCSV, exportToPDF }: { 
+    adminFetch: (body: object) => Promise<any>, 
+    exportToExcel: (data?: any[], name?: string) => Promise<void>,
+    exportToCSV: (data?: any[], name?: string) => Promise<void>,
+    exportToPDF: (data?: any[], name?: string) => Promise<void>
+}) => {
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
