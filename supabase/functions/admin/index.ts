@@ -19,6 +19,7 @@ const allowedTables = new Set([
   "attendance",
   "audit_logs",
   "library_rules",
+  "profiles"
 ]);
 
 const jsonResponse = (body: unknown, status = 200) =>

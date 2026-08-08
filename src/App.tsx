@@ -14,6 +14,7 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import Admin from "./pages/Admin";
 import Attendance from "./pages/Attendance";
+import Profile from "./pages/Profile";
 import Connect from "./pages/Connect";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/library/attendance" element={<Attendance />} />
+          <Route path="/library/profile" element={<Profile />} />
           <Route path="/connect" element={<Connect />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

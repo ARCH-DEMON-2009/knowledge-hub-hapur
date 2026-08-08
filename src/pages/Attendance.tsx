@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   QrCode, UserPlus, LogIn, LogOut, ArrowRight, ArrowLeft, 
-  CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle, RefreshCw
+  CheckCircle2, Clock, Smartphone, ShieldCheck, AlertCircle, RefreshCw,
+  History
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -118,7 +119,17 @@ const AttendancePage = () => {
       if (type === "in") {
         // Check for active visit
         const { data: active } = await supabase.from("attendance").select("*").eq("member_id", user.id).eq("status", "inside").single();
-        if (active) throw new Error("You are already checked in.");
+        if (active) {
+            // Check if it's the same day. If so, don't allow double check-in
+            const lastCheckIn = new Date(active.check_in_time);
+            const today = new Date();
+            if (lastCheckIn.toDateString() === today.toDateString()) {
+               throw new Error("You are already checked in for today.");
+            }
+            // If it's another day but somehow still 'inside', we should probably auto-close it 
+            // but for now just block it to maintain data integrity
+            throw new Error("You have an open session from a previous day. Please contact admin.");
+        }
 
         await supabase.from("attendance").insert([{
           member_id: user.id,
@@ -141,6 +152,14 @@ const AttendancePage = () => {
         }).eq("id", active.id);
       }
       setMode("success");
+      // Log audit
+      await supabase.from("audit_logs").insert([{
+        actor_id: user.id,
+        actor_type: "member",
+        action: type === "in" ? "check_in" : "check_out",
+        entity_type: "attendance",
+        reason: `Mobile scan: ${type}`
+      }]);
     } catch (err: any) {
       toast({ variant: "destructive", title: "Failed", description: err.message });
     } finally {
@@ -236,6 +255,12 @@ const AttendancePage = () => {
               <div>
                 <h2 className="font-display text-2xl font-bold text-cream">Hello, {user.full_name}</h2>
                 <p className="font-body text-cream/60 text-sm">{new Date().toLocaleDateString('en-IN', { dateStyle: 'full' })}</p>
+                <button 
+                  onClick={() => navigate("/library/profile")}
+                  className="mt-2 text-gold text-xs font-bold font-body flex items-center justify-center gap-1 hover:underline mx-auto"
+                >
+                  <History className="w-3 h-3" /> View My History
+                </button>
               </div>
 
               <div className="grid gap-4">
