@@ -24,12 +24,15 @@ const jsonResponse = (body: unknown, status = 200) =>
   });
 
 const getGalleryPathFromUrl = (imageUrl: string) => {
-  const marker = "/storage/v1/object/public/gallery/";
-  const markerIndex = imageUrl.indexOf(marker);
+  const markers = [
+    "/storage/v1/object/public/gallery/",
+    "/storage/v1/object/sign/gallery/",
+  ];
+  const marker = markers.find((m) => imageUrl.includes(m));
 
-  if (markerIndex === -1) return null;
+  if (!marker) return null;
 
-  const rawPath = imageUrl.slice(markerIndex + marker.length).split("?")[0];
+  const rawPath = imageUrl.slice(imageUrl.indexOf(marker) + marker.length).split("?")[0];
 
   try {
     return decodeURIComponent(rawPath);
@@ -237,9 +240,15 @@ Deno.serve(async (req) => {
           return jsonResponse({ error: uploadError.message }, 400);
         }
 
-        const { data: urlData } = supabase.storage
+        // Bucket is private (public buckets are blocked by workspace policy),
+        // so store a long-lived signed URL instead of a public URL.
+        const { data: urlData, error: signError } = await supabase.storage
           .from("gallery")
-          .getPublicUrl(filePath);
+          .createSignedUrl(filePath, 60 * 60 * 24 * 365 * 10);
+
+        if (signError || !urlData?.signedUrl) {
+          return jsonResponse({ error: signError?.message || "Failed to sign URL" }, 400);
+        }
 
         const { data: latest, error: latestError } = await supabase
           .from("gallery")
@@ -256,7 +265,7 @@ Deno.serve(async (req) => {
         result = await supabase
           .from("gallery")
           .insert({
-            image_url: urlData.publicUrl,
+            image_url: urlData.signedUrl,
             caption,
             sort_order: nextSortOrder,
           })
