@@ -28,7 +28,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="font-body text-cream text-sm leading-relaxed opacity-80">
-              Founded by Bijander Kumar. A completely free and disciplined study library for every student in Hapur.
+              Founded by Bijander Kumar. A completely free and disciplined study library for every student in Hapur. Founder: By Bijander Kumar.
             </p>
           </div>
 
@@ -53,7 +53,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-gold shrink-0" />
-                <span className="font-body text-cream text-sm opacity-80">Ramgarhi, Hapur, UP, India</span>
+                <span className="font-body text-cream text-sm opacity-80">Ramgarhi, Hapur, Uttar Pradesh</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-gold shrink-0" />
@@ -69,8 +69,7 @@ const Footer = () => {
 
         <div className="border-t border-[hsl(var(--gold),0.1)] pt-8 text-center">
           <p className="font-body text-cream text-sm opacity-70">
-            © {new Date().getFullYear()} Janhitkari Library. All rights reserved. Made with{" "}
-            <Heart className="w-3 h-3 inline text-[hsl(0,80%,60%)]" /> for education.
+            © {new Date().getFullYear()} Janhitkari Library. All rights reserved.
           </p>
         </div>
       </div>

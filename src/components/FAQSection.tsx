@@ -5,9 +5,9 @@ import { ChevronDown } from "lucide-react";
 const faqs = [
   { q: "Is the library completely free?", a: "Yes! Janhitkari Library is 100% free for everyone. There are no registration fees, no monthly charges, and no hidden costs." },
   { q: "What are the library timings?", a: "We are open daily from 6:00 AM to 8:00 PM — that's 14 hours every single day." },
-  { q: "Is registration required?", a: "No formal registration is needed. Simply walk in and fill your name and entry time in the register placed on the table." },
+  { q: "Is registration required?", a: "For the digital attendance system, members need an account. You can register at /library/attendance or follow the manual process in person." },
   { q: "What facilities are available?", a: "We offer peaceful study areas, competitive exam preparation space, free Wi-Fi, computer lab, printing services, newspapers, clean drinking water, CCTV security, comfortable seating, proper lighting, and a silent environment." },
-  { q: "Who founded this library?", a: "Janhitkari Library was founded by Bijander Kumar with the mission of providing free and disciplined education to every student in Hapur." },
+  { q: "Who founded this library?", a: "Janhitkari Library was founded by Bijander Kumar with the mission of providing a free and disciplined study environment for every student in Hapur." },
   { q: "Where is the library located?", a: "We are located in Ramgarhi, Hapur, Uttar Pradesh, India. You can reach us at 9917917437 for directions." },
 ];
 

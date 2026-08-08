@@ -72,8 +72,8 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard title="Total Members" value={stats?.totalMembers || 0} icon={Users} color="bg-blue-500" />
         <StatCard title="Inside Now" value={stats?.currentlyInsideCount || 0} icon={UserCheck} color="bg-green-500" />
-        <StatCard title="Today's Check-ins" value={stats?.todayCheckIns || 0} icon={LogIn} color="bg-gold" />
-        <StatCard title="Study Hours" value={stats?.todayStudyHours || 0} icon={BookOpen} color="bg-purple-500" />
+        <StatCard title="Today's Check-ins" value={stats?.todayCheckIns || 0} icon={LogIn} color="bg-[hsl(45,80%,55%)]" />
+        <StatCard title="Today's Study Hours" value={stats?.todayStudyHours || 0} icon={BookOpen} color="bg-purple-500" />
       </div>
 
       {/* Tabs */}
@@ -228,7 +228,7 @@ const QRManager = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> 
       <div className="space-y-6">
           <div className="flex justify-between items-center">
               <h3 className="font-display text-xl font-bold text-navy">QR Access Control</h3>
-              <button onClick={generateNew} className="flex items-center gap-2 px-4 py-2 bg-gold text-navy font-bold rounded-lg shadow-gold">
+              <button onClick={generateNew} className="flex items-center gap-2 px-4 py-2 bg-[hsl(45,80%,55%)] text-navy font-bold rounded-lg shadow-gold">
                   <Plus className="w-4 h-4" /> Generate New QR
               </button>
           </div>

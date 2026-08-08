@@ -28,7 +28,7 @@ const DisciplineSection = () => {
             Entry & Exit Register
           </h2>
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
-            All students must fill their entry and exit time in the register placed on the table. This simple system ensures transparency and responsibility.
+            All students must fill their entry and exit time in the physical register placed on the table. This helps maintain order and ensure responsibility.
           </p>
         </motion.div>
 

@@ -166,8 +166,8 @@ const AttendancePage = () => {
           {mode === "choice" && (
             <div className="text-center space-y-6">
               <QrCode className="w-16 h-16 text-gold mx-auto" />
-              <h1 className="font-display text-3xl font-bold text-cream">Attendance System</h1>
-              <p className="font-body text-cream/70">Welcome to Janhitkari Library. Please identify yourself to continue.</p>
+              <h1 className="font-display text-3xl font-bold text-gradient-gold">Digital Attendance</h1>
+              <p className="font-body text-cream/70">Welcome to Janhitkari Library. Scan when you enter and when you leave.</p>
               <div className="grid gap-4">
                 <button onClick={() => setMode("login")} className="flex items-center justify-center gap-3 py-4 bg-gold text-navy font-bold rounded-2xl hover:scale-[1.02] transition-all">
                   <LogIn className="w-5 h-5" /> Member Login
@@ -202,7 +202,8 @@ const AttendancePage = () => {
                 <Input label="Father's Name" value={fatherName} onChange={setFatherName} />
                 <Input label="Mobile Number" type="tel" value={mobile} onChange={setMobile} />
                 <Input label="Address" value={address} onChange={setAddress} />
-                <Input label="Create Password" type="password" value={password} onChange={setPassword} />
+                <Input label="Password" type="password" value={password} onChange={setPassword} />
+                <Input label="Confirm Password" type="password" value={password} onChange={setPassword} />
               </div>
               <button disabled={loading} className="w-full py-4 bg-gold text-navy font-bold rounded-2xl disabled:opacity-50">
                 {loading ? "Registering..." : "Create Account"}
