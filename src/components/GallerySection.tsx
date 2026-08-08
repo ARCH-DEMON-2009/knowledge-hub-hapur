@@ -57,7 +57,23 @@ const GallerySection = () => {
     }
   };
 
-  if (loading || images.length === 0) return null;
+  if (loading) return (
+    <div className="py-24 bg-cream flex items-center justify-center min-h-[400px]">
+      <div className="w-8 h-8 border-4 border-gold border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+
+  if (images.length === 0) return (
+    <div className="py-24 bg-cream flex flex-col items-center justify-center min-h-[400px] text-center px-4">
+      <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mb-4">
+        <span className="text-2xl">📸</span>
+      </div>
+      <h3 className="font-display text-xl font-bold text-navy mb-2">No photos yet</h3>
+      <p className="font-body text-muted-foreground max-w-sm">
+        We haven't uploaded any photos to the gallery yet. Check back soon!
+      </p>
+    </div>
+  );
 
   return (
     <section className="py-24 bg-cream relative" ref={ref}>
