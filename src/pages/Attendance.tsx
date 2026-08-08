@@ -332,41 +332,48 @@ const AttendancePage = () => {
               <div>
                 <h2 className="font-display text-2xl font-bold text-cream">Hello, {user.full_name}</h2>
                 <p className="font-body text-cream/60 text-sm">{new Date().toLocaleDateString('en-IN', { dateStyle: 'full' })}</p>
+                <div className="mt-4 p-3 bg-gold/10 border border-gold/20 rounded-xl">
+                  <p className="text-gold text-xs font-body font-bold uppercase tracking-tighter">Automatic Mode Active</p>
+                  <p className="text-cream/60 text-[10px] mt-1">Scan a library QR code to automatically check in or leave.</p>
+                </div>
                 <button 
                   onClick={() => navigate("/library/profile")}
-                  className="mt-2 text-gold text-xs font-bold font-body flex items-center justify-center gap-1 hover:underline mx-auto"
+                  className="mt-4 text-gold text-xs font-bold font-body flex items-center justify-center gap-1 hover:underline mx-auto"
                 >
                   <History className="w-3 h-3" /> View My History
                 </button>
               </div>
 
-              <div className="grid gap-4">
+              <div className="grid gap-4 opacity-50 pointer-events-none select-none">
+                <div className="text-[10px] text-cream/40 uppercase font-bold tracking-widest text-center mb-[-12px]">Manual Override</div>
                 <button 
-                  onClick={() => handleAttendance("in")}
-                  disabled={loading}
-                  className="group relative flex items-center justify-between p-6 bg-green-600/20 border-2 border-green-500/50 rounded-2xl hover:bg-green-600/30 transition-all text-left"
+                  className="group relative flex items-center justify-between p-6 bg-green-600/20 border-2 border-green-500/50 rounded-2xl text-left"
                 >
                   <div>
                     <span className="block font-display font-bold text-green-400 text-xl">CHECK IN</span>
                     <span className="text-xs text-green-400/70 font-body">Starting study session</span>
                   </div>
-                  <LogIn className="w-8 h-8 text-green-500 group-hover:translate-x-1 transition-transform" />
+                  <LogIn className="w-8 h-8 text-green-500" />
                 </button>
 
                 <button 
-                  onClick={() => handleAttendance("out")}
-                  disabled={loading}
-                  className="group relative flex items-center justify-between p-6 bg-red-600/20 border-2 border-red-500/50 rounded-2xl hover:bg-red-600/30 transition-all text-left"
+                  className="group relative flex items-center justify-between p-6 bg-red-600/20 border-2 border-red-500/50 rounded-2xl text-left"
                 >
                   <div>
                     <span className="block font-display font-bold text-red-400 text-xl">LEAVE LIBRARY</span>
                     <span className="text-xs text-red-400/70 font-body">Ending study session</span>
                   </div>
-                  <LogOut className="w-8 h-8 text-red-500 group-hover:translate-x-1 transition-transform" />
+                  <LogOut className="w-8 h-8 text-red-500" />
                 </button>
               </div>
 
-              <div className="pt-4 border-t border-cream/10">
+              <div className="pt-4 border-t border-cream/10 flex flex-col gap-3">
+                {!qrCodeId && (
+                  <div className="bg-red-500/10 p-2 rounded-lg border border-red-500/30">
+                    <p className="text-[10px] text-red-400 font-bold uppercase">Scan Required</p>
+                    <p className="text-[9px] text-red-400/70">Please scan the library's official QR code to track attendance.</p>
+                  </div>
+                )}
                 <button onClick={logout} className="text-cream/40 hover:text-cream text-xs font-body transition-colors underline">Not you? Switch Account</button>
               </div>
             </div>
