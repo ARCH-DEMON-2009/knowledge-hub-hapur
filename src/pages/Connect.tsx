@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Terminal, MessageCircle, Cpu, RefreshCcw, 
-  Copy, Check, ExternalLink, Bot
+  Copy, Check, ExternalLink, Bot, LogIn
 } from "lucide-react";
 import { getMcpUrl } from "@/lib/attendance-utils";
 import Navbar from "@/components/Navbar";
