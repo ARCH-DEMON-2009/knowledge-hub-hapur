@@ -13,7 +13,7 @@ const allowedTables = new Set([
   "library_status",
   "closure_dates",
   "announcements",
-  "gallery",
+  
   "testimonials",
   "visitor_logs",
 ]);
@@ -94,14 +94,9 @@ Deno.serve(async (req) => {
 
         const query = supabase.from(table).select("*");
 
-        if (table === "gallery") {
-          result = await query
-            .order("sort_order", { ascending: true })
-            .order("created_at", { ascending: false });
-        } else {
           const orderCol = table === "library_status" ? "updated_at" : "created_at";
           result = await query.order(orderCol, { ascending: false });
-        }
+
 
         break;
       }
@@ -130,68 +125,6 @@ Deno.serve(async (req) => {
         break;
       }
 
-      case "delete_gallery_image": {
-        if (!id) {
-          return jsonResponse({ error: "Image id is required" }, 400);
-        }
-
-        const { data: existingImage, error: existingError } = await supabase
-          .from("gallery")
-          .select("id, image_url")
-          .eq("id", id)
-          .single();
-
-        if (existingError || !existingImage) {
-          return jsonResponse({ error: "Image not found" }, 404);
-        }
-
-        const storagePath = getGalleryPathFromUrl(existingImage.image_url);
-        if (storagePath) {
-          const { error: storageError } = await supabase.storage
-            .from("gallery")
-            .remove([storagePath]);
-
-          if (storageError) {
-            return jsonResponse({ error: storageError.message }, 400);
-          }
-        }
-
-        result = await supabase.from("gallery").delete().eq("id", id).select();
-        break;
-      }
-
-      case "reorder_gallery": {
-        if (!Array.isArray(data)) {
-          return jsonResponse({ error: "Invalid reorder payload" }, 400);
-        }
-
-        const updates = data
-          .filter((entry) => entry && typeof entry.id === "string")
-          .map((entry, index) =>
-            supabase
-              .from("gallery")
-              .update({
-                sort_order: Number.isFinite(Number(entry.sort_order))
-                  ? Number(entry.sort_order)
-                  : index,
-              })
-              .eq("id", entry.id),
-          );
-
-        const updateResults = await Promise.all(updates);
-        const failed = updateResults.find((res) => res.error);
-        if (failed?.error) {
-          return jsonResponse({ error: failed.error.message }, 400);
-        }
-
-        result = await supabase
-          .from("gallery")
-          .select("*")
-          .order("sort_order", { ascending: true });
-        break;
-      }
-
-      case "upload_gallery_image": {
         let fileBytes: Uint8Array;
         let fileName = `${crypto.randomUUID()}.jpg`;
         let fileContentType = "image/jpeg";
