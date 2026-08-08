@@ -22,6 +22,29 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "inside" | "history" | "qr" | "audit">("overview");
 
+  const exportToExcel = async (customData?: any[], fileName?: string) => {
+    try {
+      const dataToExport = customData || (await adminFetch({ action: "list", table: "attendance" })).data;
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
+      XLSX.writeFile(workbook, `${fileName || 'Janhitkari_Attendance'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+      
+      await adminFetch({ 
+        action: "insert", 
+        table: "audit_logs", 
+        data: { 
+          actor_type: "admin", 
+          action: "excel_export", 
+          entity_type: "attendance",
+          reason: customData ? "Filtered export" : "Full export"
+        } 
+      });
+    } catch (error) {
+      console.error("Export failed", error);
+    }
+  };
+
   const loadStats = async () => {
     try {
       const data = await adminFetch({ action: "get_attendance_stats" });
@@ -39,31 +62,6 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
     return () => clearInterval(interval);
   }, []);
 
-  const exportToExcel = async () => {
-    try {
-      const { data } = await adminFetch({ action: "list", table: "attendance" });
-      // Enhance data with member info if needed, or fetch joined data
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendance");
-      XLSX.writeFile(workbook, `Janhitkari_Attendance_${new Date().toISOString().split('T')[0]}.xlsx`);
-      
-      // Log export
-      await adminFetch({ 
-        action: "insert", 
-        table: "audit_logs", 
-        data: { 
-          actor_type: "admin", 
-          action: "excel_export", 
-          entity_type: "attendance",
-          reason: "Manual export"
-        } 
-      });
-    } catch (error) {
-      console.error("Export failed", error);
-    }
-  };
-
   if (loading) return <div className="p-8 text-center text-muted-foreground font-body">Loading Analytics...</div>;
 
   return (
@@ -77,12 +75,23 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-border pb-2">
-        <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" icon={Activity} />
-        <TabButton active={activeTab === "inside"} onClick={() => setActiveTab("inside")} label="Currently Inside" icon={UserCheck} />
-        <TabButton active={activeTab === "history"} onClick={() => setActiveTab("history")} label="History" icon={History} />
-        <TabButton active={activeTab === "qr"} onClick={() => setActiveTab("qr")} label="QR Management" icon={QrCode} />
-        <TabButton active={activeTab === "audit"} onClick={() => setActiveTab("audit")} label="Audit Logs" icon={ShieldAlert} />
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+        <div className="flex flex-wrap gap-2">
+          <TabButton active={activeTab === "overview"} onClick={() => setActiveTab("overview")} label="Overview" icon={Activity} />
+          <TabButton active={activeTab === "inside"} onClick={() => setActiveTab("inside")} label="Currently Inside" icon={UserCheck} />
+          <TabButton active={activeTab === "history"} onClick={() => setActiveTab("history")} label="History" icon={History} />
+          <TabButton active={activeTab === "qr"} onClick={() => setActiveTab("qr")} label="QR Management" icon={QrCode} />
+          <TabButton active={activeTab === "audit"} onClick={() => setActiveTab("audit")} label="Audit Logs" icon={ShieldAlert} />
+        </div>
+        
+        <div className="flex gap-2">
+          <button 
+            onClick={() => exportToExcel()}
+            className="flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-all shadow-sm"
+          >
+            <FileDown className="w-3.5 h-3.5" /> Full Export
+          </button>
+        </div>
       </div>
 
       <div className="mt-4">
@@ -95,11 +104,10 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
                     <p className="text-sm text-muted-foreground font-body mb-4">
                         Download full attendance history as a professional Excel file for records and reporting.
                     </p>
-                    <button onClick={exportToExcel} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
+                    <button onClick={() => exportToExcel()} className="w-full py-3 bg-gold text-navy font-bold rounded-lg hover:brightness-105 transition-all">
                         Generate Excel Report
                     </button>
                 </div>
-                {/* Analytics placeholder */}
                 <div className="glass p-6 rounded-xl shadow-soft flex items-center justify-center text-muted-foreground italic font-body">
                     Charts & Trends coming soon...
                 </div>
@@ -135,7 +143,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
         )}
 
         {activeTab === "qr" && <QRManager adminFetch={adminFetch} />}
-        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} />}
+        {activeTab === "history" && <AttendanceHistory adminFetch={adminFetch} exportToExcel={exportToExcel} />}
         {activeTab === "audit" && <AuditLogs adminFetch={adminFetch} />}
       </div>
     </div>
@@ -277,7 +285,7 @@ const QRManager = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> 
   );
 };
 
-const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
+const AttendanceHistory = ({ adminFetch, exportToExcel }: { adminFetch: (body: object) => Promise<any>, exportToExcel: (data?: any[], name?: string) => Promise<void> }) => {
     const [history, setHistory] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -289,10 +297,34 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
     }, []);
 
     return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 className="font-display text-xl font-bold text-navy">Attendance History</h3>
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+                <input 
+                    type="date" 
+                    id="history-date-filter"
+                    className="px-3 py-1.5 rounded-lg border border-border text-sm font-body bg-white"
+                />
+                <button 
+                    onClick={() => {
+                        const dateInput = document.getElementById('history-date-filter') as HTMLInputElement;
+                        const date = dateInput.value;
+                        if (!date) return;
+                        const filtered = history.filter(h => new Date(h.check_in_time).toISOString().split('T')[0] === date);
+                        exportToExcel(filtered, `Attendance_${date}`);
+                    }}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-1.5 bg-navy text-cream text-xs font-bold rounded-lg hover:bg-navy-light"
+                >
+                    <FileDown className="w-3.5 h-3.5" /> Export Date
+                </button>
+            </div>
+        </div>
         <div className="glass rounded-xl overflow-hidden shadow-soft">
             <table className="w-full text-left font-body text-sm">
                 <thead className="bg-navy text-cream">
                     <tr>
+                        <th className="px-4 py-3">Member</th>
                         <th className="px-4 py-3">Date</th>
                         <th className="px-4 py-3">Check-in</th>
                         <th className="px-4 py-3">Check-out</th>
@@ -303,7 +335,11 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
                 <tbody className="divide-y divide-border">
                     {history.map((h) => (
                         <tr key={h.id} className="bg-card hover:bg-accent/5">
-                            <td className="px-4 py-3">{formatDate(h.check_in_time)}</td>
+                                <td className="px-4 py-3 font-medium text-navy cursor-pointer hover:underline" onClick={() => {
+                                    const filtered = history.filter(item => item.member_id === h.member_id);
+                                    exportToExcel(filtered, `History_Member_${h.member_id.substring(0,8)}`);
+                                }}>{h.member_id.substring(0,8)}...</td>
+                                <td className="px-4 py-3">{formatDate(h.check_in_time)}</td>
                             <td className="px-4 py-3">{formatTime(h.check_in_time)}</td>
                             <td className="px-4 py-3">{h.check_out_time ? formatTime(h.check_out_time) : "—"}</td>
                             <td className="px-4 py-3 font-semibold">{h.duration_minutes ? `${h.duration_minutes}m` : "—"}</td>
@@ -320,6 +356,7 @@ const AttendanceHistory = ({ adminFetch }: { adminFetch: (body: object) => Promi
                 </tbody>
             </table>
         </div>
+      </div>
     );
 };
 
