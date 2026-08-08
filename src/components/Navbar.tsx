@@ -14,13 +14,29 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ];
 
+import { supabase } from "@/integrations/supabase/client";
+
 const Navbar = () => {
+  const [announcement, setAnnouncement] = useState<{ title: string; content: string } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
+    // Fetch latest announcement
+    supabase
+      .from("announcements")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) setAnnouncement(data);
+      });
+
     const onScroll = () => setScrolled(window.scrollY > 50);
+
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -29,11 +45,17 @@ const Navbar = () => {
   const showTransparent = isHome && !scrolled;
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        showTransparent ? "bg-transparent py-4" : "bg-white/95 backdrop-blur-md shadow-soft py-2"
-      }`}
-    >
+    <div className="contents">
+      {announcement && (
+        <div className="bg-gold text-navy py-2 text-center text-sm font-medium z-[60] relative">
+          <strong>{announcement.title}:</strong> {announcement.content}
+        </div>
+      )}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          showTransparent ? (announcement ? "mt-9 bg-transparent py-4" : "bg-transparent py-4") : "bg-white/95 backdrop-blur-md shadow-soft py-2"
+        }`}
+      >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="Janhitkari Library Logo" className="h-10 w-10 object-contain" />
@@ -117,7 +139,8 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+      </nav>
+    </div>
   );
 };
 

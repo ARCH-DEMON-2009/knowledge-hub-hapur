@@ -9,6 +9,7 @@ import ClosingSection from "@/components/ClosingSection";
 import Footer from "@/components/Footer";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import SEO from "@/components/SEO";
+import VisitorForm from "@/components/VisitorForm";
 
 
 const libraryJsonLd = {
@@ -54,6 +55,7 @@ const Index = () => {
       <GallerySection />
       <TestimonialsSection />
       <WhyUsSection />
+      <VisitorForm />
       <ClosingSection />
       <Footer />
 
