@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { 
   Users, Clock, LogIn, LogOut, BookOpen, UserCheck, 
-  FileDown, QrCode, ShieldAlert, History, Activity, FileSpreadsheet, FileText, Search, Filter
+  FileDown, QrCode, ShieldAlert, History, Activity, FileSpreadsheet, FileText, Search, Filter, TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import * as XLSX from "xlsx";
@@ -9,6 +9,10 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import QRCode from "react-qr-code";
 import { formatTime, formatDate } from "@/lib/attendance-utils";
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  AreaChart, Area
+} from 'recharts';
 
 interface AttendanceStats {
   totalMembers: number;
@@ -17,6 +21,7 @@ interface AttendanceStats {
   todayCheckOuts: number;
   todayStudyHours: number;
   currentlyInsideList: any[];
+  dailyTrends?: any[];
 }
 
 const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Promise<any> }) => {
@@ -187,31 +192,79 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
 
       <div className="mt-4">
         {activeTab === "overview" && (
-            <div className="grid md:grid-cols-2 gap-6">
-                <div className="glass p-6 rounded-xl shadow-soft">
-                    <h3 className="font-display font-bold text-navy mb-4 flex items-center gap-2">
-                        <FileDown className="w-5 h-5" /> Export Data Hub
-                    </h3>
-                    <p className="text-sm text-muted-foreground font-body mb-6">
-                        Download full attendance records in professional, branded formats for archival and reporting.
-                    </p>
-                    <div className="grid grid-cols-3 gap-3">
-                        <button onClick={() => exportToExcel()} className="flex flex-col items-center gap-2 py-4 bg-white border border-green-200 text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all shadow-sm">
-                            <FileSpreadsheet className="w-6 h-6" />
-                            <span className="text-[10px] uppercase">Excel</span>
-                        </button>
-                        <button onClick={() => exportToCSV()} className="flex flex-col items-center gap-2 py-4 bg-white border border-blue-200 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm">
-                            <FileDown className="w-6 h-6" />
-                            <span className="text-[10px] uppercase">CSV</span>
-                        </button>
-                        <button onClick={() => exportToPDF()} className="flex flex-col items-center gap-2 py-4 bg-white border border-red-200 text-red-700 font-bold rounded-xl hover:bg-red-50 transition-all shadow-sm">
-                            <FileText className="w-6 h-6" />
-                            <span className="text-[10px] uppercase">PDF</span>
-                        </button>
+            <div className="space-y-6">
+                {/* Analytics Charts */}
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="glass p-6 rounded-2xl shadow-soft border border-white/20">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="font-display font-bold text-navy flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-gold-dark" /> Attendance Trends (7 Days)
+                            </h3>
+                        </div>
+                        <div className="h-[250px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={stats?.dailyTrends || []}>
+                                    <defs>
+                                        <linearGradient id="colorCheckIns" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#1C2B48" stopOpacity={0.1}/>
+                                            <stop offset="95%" stopColor="#1C2B48" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorCheckOuts" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#C5A059" stopOpacity={0.1}/>
+                                            <stop offset="95%" stopColor="#C5A059" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} dy={10} />
+                                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748B' }} />
+                                    <Tooltip 
+                                        contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                    <Legend iconType="circle" />
+                                    <Area type="monotone" dataKey="checkIns" name="Check-ins" stroke="#1C2B48" fillOpacity={1} fill="url(#colorCheckIns)" strokeWidth={2} />
+                                    <Area type="monotone" dataKey="checkOuts" name="Check-outs" stroke="#C5A059" fillOpacity={1} fill="url(#colorCheckOuts)" strokeWidth={2} />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
-                </div>
-                <div className="glass p-6 rounded-xl shadow-soft flex items-center justify-center text-muted-foreground italic font-body">
-                    Charts & Trends coming soon...
+
+                    <div className="glass p-6 rounded-2xl shadow-soft border border-white/20">
+                        <h3 className="font-display font-bold text-navy mb-4 flex items-center gap-2">
+                            <FileDown className="w-5 h-5 text-gold-dark" /> Export Data Hub
+                        </h3>
+                        <p className="text-sm text-muted-foreground font-body mb-6">
+                            Download full attendance records in professional, branded formats for archival and reporting.
+                        </p>
+                        <div className="grid grid-cols-3 gap-3">
+                            <button onClick={() => exportToExcel()} className="flex flex-col items-center gap-2 py-4 bg-white border border-green-200 text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all shadow-sm">
+                                <FileSpreadsheet className="w-6 h-6" />
+                                <span className="text-[10px] uppercase">Excel</span>
+                            </button>
+                            <button onClick={() => exportToCSV()} className="flex flex-col items-center gap-2 py-4 bg-white border border-blue-200 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm">
+                                <FileDown className="w-6 h-6" />
+                                <span className="text-[10px] uppercase">CSV</span>
+                            </button>
+                            <button onClick={() => exportToPDF()} className="flex flex-col items-center gap-2 py-4 bg-white border border-red-200 text-red-700 font-bold rounded-xl hover:bg-red-50 transition-all shadow-sm">
+                                <FileText className="w-6 h-6" />
+                                <span className="text-[10px] uppercase">PDF</span>
+                            </button>
+                        </div>
+                        
+                        <div className="mt-8 p-4 bg-navy/5 rounded-xl border border-navy/10">
+                            <h4 className="text-xs font-bold text-navy uppercase tracking-widest mb-2">Live Occupancy</h4>
+                            <div className="w-full bg-navy/10 h-2 rounded-full overflow-hidden">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${Math.min(100, ((stats?.currentlyInsideCount || 0) / 50) * 100)}%` }}
+                                    className="bg-navy h-full"
+                                />
+                            </div>
+                            <div className="flex justify-between mt-1">
+                                <span className="text-[10px] text-muted-foreground">{stats?.currentlyInsideCount || 0} active</span>
+                                <span className="text-[10px] text-muted-foreground">Capacity: 50</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )}
