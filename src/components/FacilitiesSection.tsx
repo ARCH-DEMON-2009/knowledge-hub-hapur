@@ -135,7 +135,7 @@ const FacilityCard = ({
 
         {/* Content */}
         <div className="relative z-10 flex-1 min-w-0">
-          <h3 className="font-display text-base font-semibold text-foreground mb-1 group-hover:text-navy transition-colors duration-300">
+          <h3 className="font-display text-base font-semibold text-navy group-hover:text-gold-dark transition-colors duration-300">
             {facility.title}
           </h3>
           <p className="font-body text-sm text-muted-foreground leading-relaxed">

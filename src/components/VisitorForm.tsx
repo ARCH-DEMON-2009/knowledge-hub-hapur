@@ -90,7 +90,7 @@ const VisitorForm = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-gold/50 font-body"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-gold/50 font-body bg-white text-navy placeholder:text-muted-foreground"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -104,7 +104,7 @@ const VisitorForm = () => {
                     type="text"
                     value={purpose}
                     onChange={(e) => setPurpose(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-gold/50 font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-gold/50 font-body bg-white text-navy placeholder:text-muted-foreground"
                     placeholder="e.g. Exam Prep, Self Study"
                   />
                 </div>

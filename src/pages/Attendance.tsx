@@ -386,8 +386,8 @@ const AttendancePage = () => {
                 <h2 className="font-display text-2xl font-bold text-cream">Hello, {user.full_name}</h2>
                 <p className="font-body text-cream/60 text-sm">{new Date().toLocaleDateString('en-IN', { dateStyle: 'full' })}</p>
                 <div className="mt-4 p-3 bg-gold/10 border border-gold/20 rounded-xl">
-                  <p className="text-gold text-xs font-body font-bold uppercase tracking-tighter">Automatic Mode Active</p>
-                  <p className="text-cream/60 text-[10px] mt-1">Scan a library QR code to automatically check in or leave.</p>
+                  <p className="text-gold font-body font-bold uppercase tracking-tighter">Automatic Mode Active</p>
+                  <p className="text-cream text-xs mt-1">Scan a library QR code to automatically check in or leave.</p>
                 </div>
                 <button 
                   onClick={() => navigate("/library/profile")}
