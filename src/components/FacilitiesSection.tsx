@@ -54,8 +54,8 @@ const FacilitiesSection = () => {
           <h2 className="font-display text-3xl md:text-5xl font-bold text-foreground mb-4">
             Our Facilities
           </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-xl mx-auto">
-            A professional environment designed for serious learners.
+          <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
+            Janhitkari Library offers world-class facilities to ensure a comfortable and productive study experience for all students in Hapur.
           </p>
         </motion.div>
 

@@ -1,10 +1,13 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Clock, Volume2, BookOpen } from "lucide-react";
+import { Clock, Volume2, BookOpen, UserCheck, ShieldAlert, Heart, LogIn, Users } from "lucide-react";
 
 const rules = [
   { icon: Clock, title: "Timing", desc: "Open daily from 6:00 AM to 8:00 PM. Please arrive and leave on time." },
   { icon: Volume2, title: "Silence", desc: "Maintain complete silence in reading areas. Use of phones on silent mode only." },
+  { icon: UserCheck, title: "QR Attendance", desc: "Every member must scan their QR code at the entrance for automated check-in and check-out." },
+  { icon: ShieldAlert, title: "Zero Tolerance", desc: "Smoking, chewing tobacco, or any form of indiscipline is strictly prohibited inside and near the library." },
+  { icon: Heart, title: "Respect", desc: "Treat fellow students and library property with respect. Help maintain a positive learning culture." },
   { icon: BookOpen, title: "Book Care", desc: "Handle all books with care and responsibility. Return them to their proper place." },
 ];
 
@@ -29,7 +32,7 @@ const RulesSection = () => {
           <p className="font-body text-cream text-lg opacity-85">A disciplined environment benefits everyone.</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {rules.map((rule, i) => (
             <motion.div
               key={rule.title}

@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
       }
       
       case "get_attendance_stats": {
-        // Today's stats in Asia/Kolkata
+        // Today's stats
         const now = new Date();
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         
@@ -152,13 +152,44 @@ Deno.serve(async (req) => {
             }
         });
 
+        // Weekly trends
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+
+        const { data: weeklyHistory } = await supabase
+          .from("attendance")
+          .select("check_in_time, check_out_time, status")
+          .gte("check_in_time", sevenDaysAgo.toISOString());
+
+        // Process weekly data for charts
+        const dailyTrendsMap = new Map();
+        for (let i = 0; i < 7; i++) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+          dailyTrendsMap.set(dateStr, { name: dateStr, checkIns: 0, checkOuts: 0 });
+        }
+
+        weeklyHistory?.forEach(a => {
+          const dateStr = new Date(a.check_in_time).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+          if (dailyTrendsMap.has(dateStr)) {
+            const val = dailyTrendsMap.get(dateStr);
+            val.checkIns++;
+            if (a.status === 'completed' || a.check_out_time) val.checkOuts++;
+          }
+        });
+
+        const dailyTrends = Array.from(dailyTrendsMap.values()).reverse();
+
         return jsonResponse({
           totalMembers,
           currentlyInsideCount: currentlyInside.length,
           todayCheckIns: checkIns,
           todayCheckOuts: checkOuts,
           todayStudyHours: Math.round(totalMinutes / 60 * 10) / 10,
-          currentlyInsideList: currentlyInside
+          currentlyInsideList: currentlyInside,
+          dailyTrends
         });
       }
 
