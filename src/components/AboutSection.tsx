@@ -11,7 +11,12 @@ const AboutSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 bg-navy-dark relative overflow-hidden">
+    <section id="about" className="py-24 relative overflow-hidden">
+      {/* Dynamic atmospheric layer */}
+      <div className="absolute inset-0 bg-navy-dark pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,rgba(180,210,185,0.15),transparent_70%)] pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,rgba(210,195,170,0.1),transparent_70%)] pointer-events-none" />
+
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--gold))] to-transparent" />
       
       <div className="container mx-auto px-4" ref={ref}>

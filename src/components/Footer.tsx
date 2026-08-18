@@ -15,10 +15,15 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="bg-navy-dark py-16 relative">
+    <footer className="py-16 relative overflow-hidden">
+      <div className="absolute inset-0 bg-navy-dark pointer-events-none" />
+      {/* Decorative gradient atmosphere */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,rgba(180,210,185,0.2),transparent_70%)] pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,rgba(210,195,170,0.15),transparent_70%)] pointer-events-none" />
+
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[hsl(var(--gold),0.3)] to-transparent" />
       
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
