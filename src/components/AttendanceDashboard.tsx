@@ -314,8 +314,8 @@ const StatCard = ({ title, value, icon: Icon, color }: any) => (
     <div>
       <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">{title}</p>
       <p className="text-2xl font-display font-bold text-navy">{value}</p>
+    </div>
   </GlassCard>
-  </div>
 );
 
 const TabButton = ({ active, onClick, label, icon: Icon }: any) => (
