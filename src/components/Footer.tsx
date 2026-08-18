@@ -10,7 +10,7 @@ const footerLinks = [
   { label: "Rules", href: "/rules" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
-  { label: "AI Connect", href: "/connect" },
+  
 ];
 
 const Footer = () => {
