@@ -172,6 +172,9 @@
   .border-navy {
     border-color: hsl(var(--navy));
   }
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
 }
 
 /* Smooth scroll */
