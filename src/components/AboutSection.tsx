@@ -11,7 +11,7 @@ const AboutSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 bg-cream relative overflow-hidden">
+    <section id="about" className="py-24 bg-navy-dark relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--gold))] to-transparent" />
       
       <div className="container mx-auto px-4" ref={ref}>
@@ -22,13 +22,13 @@ const AboutSection = () => {
             transition={{ duration: 0.8 }}
           >
             <span className="text-gold-dark font-body text-sm font-semibold tracking-wider uppercase mb-4 block">About Us</span>
-            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-navy mb-6">
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
               About Janhitkari Library
             </h2>
-            <p className="font-body text-navy/80 text-lg mb-6 leading-relaxed">
-              Founded by <strong className="text-navy">Bijander Kumar</strong>, Janhitkari Library was created with one mission: to provide a completely free and disciplined study environment for every student in Hapur. Located in Ramgarhi, Hapur, Uttar Pradesh, the library serves as a peaceful learning hub where students can focus, grow, and prepare for their future without financial burden.
+            <p className="font-body text-slate-300 text-lg mb-6 leading-relaxed">
+              Founded by <strong className="text-gold-light">Bijander Kumar</strong>, Janhitkari Library was created with one mission: to provide a completely free and disciplined study environment for every student in Hapur. Located in Ramgarhi, Hapur, Uttar Pradesh, the library serves as a peaceful learning hub where students can focus, grow, and prepare for their future without financial burden.
             </p>
-            <p className="font-body text-navy/80 mb-8 leading-relaxed">
+            <p className="font-body text-slate-300 mb-8 leading-relaxed">
               There are no membership fees. No hidden charges. Just pure dedication to education.
             </p>
 
