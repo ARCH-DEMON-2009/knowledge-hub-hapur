@@ -227,9 +227,9 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>
-                    </div>
+                    </GlassCard>
 
-                    <div className="glass p-6 rounded-2xl shadow-soft border border-white/20">
+                    <GlassCard variant="light" className="p-6">
                         <h3 className="font-display font-bold text-navy mb-4 flex items-center gap-2">
                             <FileDown className="w-5 h-5 text-gold-dark" /> Export Data Hub
                         </h3>
@@ -265,13 +265,13 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
                                 <span className="text-[10px] text-muted-foreground">Capacity: 50</span>
                             </div>
                         </div>
-                    </div>
+                    </GlassCard>
                 </div>
             </div>
         )}
 
         {activeTab === "inside" && (
-            <div className="glass rounded-xl overflow-hidden shadow-soft">
+            <GlassCard variant="light" className="overflow-hidden">
                 <table className="w-full text-left font-body text-sm">
                     <thead className="bg-navy text-cream">
                         <tr>
@@ -295,7 +295,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
                         )}
                     </tbody>
                 </table>
-            </div>
+            </GlassCard>
         )}
 
         {activeTab === "qr" && <QRManager adminFetch={adminFetch} />}
@@ -307,14 +307,14 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
 };
 
 const StatCard = ({ title, value, icon: Icon, color }: any) => (
-  <div className="glass p-5 rounded-2xl shadow-soft flex items-center gap-4">
+  <GlassCard variant="light" className="p-5 flex items-center gap-4">
     <div className={`p-3 rounded-xl ${color} text-white`}>
       <Icon className="w-6 h-6" />
     </div>
     <div>
       <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">{title}</p>
       <p className="text-2xl font-display font-bold text-navy">{value}</p>
-    </div>
+  </GlassCard>
   </div>
 );
 
