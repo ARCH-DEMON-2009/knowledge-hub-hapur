@@ -3,6 +3,9 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import aboutBg from "@/assets/about-bg.jpg";
 
+import GlassCard from "./GlassCard";
+import { BookOpen, Clock, Calendar, IndianRupee } from "lucide-react";
+
 const AboutSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
@@ -29,22 +32,25 @@ const AboutSection = () => {
               There are no membership fees. No hidden charges. Just pure dedication to education.
             </p>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-6">
               {[
-                { number: "100%", label: "Free Access" },
-                { number: "6 AM – 8 PM", label: "Daily Hours" },
-                { number: "365", label: "Days Open" },
-                { number: "0₹", label: "Membership Fee" },
+                { number: "100%", label: "Free Access", icon: <BookOpen className="w-6 h-6" />, subtitle: "Mission" },
+                { number: "6 AM – 8 PM", label: "Daily Hours", icon: <Clock className="w-6 h-6" />, subtitle: "Timing" },
+                { number: "365", label: "Days Open", icon: <Calendar className="w-6 h-6" />, subtitle: "Availability" },
+                { number: "0₹", label: "Membership Fee", icon: <IndianRupee className="w-6 h-6" />, subtitle: "Cost" },
               ].map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  className="glass rounded-xl p-4 text-center shadow-soft"
                 >
-                  <div className="font-display text-2xl font-bold text-gradient-gold">{stat.number}</div>
-                  <div className="font-body text-sm text-navy font-medium mt-1">{stat.label}</div>
+                  <GlassCard
+                    title={stat.number}
+                    subtitle={stat.subtitle}
+                    description={stat.label}
+                    icon={stat.icon}
+                  />
                 </motion.div>
               ))}
             </div>
