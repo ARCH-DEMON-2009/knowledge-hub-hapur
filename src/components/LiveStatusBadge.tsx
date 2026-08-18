@@ -34,7 +34,7 @@ const LiveStatusBadge = () => {
         <span className={`relative w-2 h-2 rounded-full shadow-lg ${statusColor} ${glowColor}`} />
       </div>
       <div className="flex items-center gap-2">
-        <span className={`text-[11px] font-bold tracking-widest ${status.is_open ? 'text-emerald-700' : 'text-rose-700'}`}>
+        <span className={`text-[11px] font-bold tracking-widest ${status.is_open ? 'text-emerald-800' : 'text-rose-800'}`}>
           {label}
         </span>
         <span className="w-px h-3 bg-navy/10" aria-hidden="true" />

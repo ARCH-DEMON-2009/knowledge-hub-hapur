@@ -90,7 +90,7 @@ const FacilityCard = ({
       <GlassCard className="p-6 h-full flex items-start gap-4">
         {/* Icon */}
         <div 
-          className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center bg-navy text-gold-light group-hover:bg-gold transition-colors duration-300"
+          className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center bg-navy text-gold-light group-hover:bg-gold-dark transition-colors duration-300"
           style={{
             boxShadow: `0 8px 16px -4px hsl(${facility.color} / 0.2)`
           }}

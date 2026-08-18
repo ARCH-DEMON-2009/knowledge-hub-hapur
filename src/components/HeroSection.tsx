@@ -33,7 +33,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="inline-block mb-6 px-5 py-2 rounded-full border border-[hsl(45,80%,55%,0.4)] bg-[hsl(45,80%,55%,0.1)]"
         >
-          <span className="text-gold-light font-body text-sm font-medium tracking-wider uppercase">
+          <span className="text-gold-light font-body text-sm font-bold tracking-wider uppercase text-shadow-sm">
             100% Free for Everyone
           </span>
         </motion.div>
