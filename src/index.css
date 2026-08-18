@@ -7,13 +7,13 @@
 @layer base {
   :root {
     --background: 40 30% 96%;
-    --foreground: 160 28% 12%; /* #1A2E1F - Deep Green */
+    --foreground: 222 60% 12%; /* #0B1629 - Dark Navy */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 50% 15%;
+    --card-foreground: 222 60% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 50% 15%;
+    --popover-foreground: 222 60% 12%;
 
     --primary: 222 60% 18%;
     --primary-foreground: 45 80% 70%;
@@ -21,8 +21,8 @@
     --secondary: 45 70% 55%;
     --secondary-foreground: 222 60% 18%;
 
-    --muted: 220 15% 92%;
-    --muted-foreground: 222 20% 35%;
+    --muted: 220 15% 90%;
+    --muted-foreground: 222 25% 35%;
 
     --accent: 45 80% 60%;
     --accent-foreground: 222 60% 12%;
@@ -30,9 +30,9 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 85%;
-    --input: 220 15% 85%;
-    --ring: 45 70% 55%;
+    --border: 220 15% 80%;
+    --input: 220 15% 80%;
+    --ring: 222 60% 18%;
 
     --radius: 0.75rem;
 
@@ -49,11 +49,11 @@
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Poppins', system-ui, sans-serif;
 
-    --glass-bg: 0 0% 100% / 0.8;
-    --glass-border: 0 0% 100% / 0.4;
-    --shadow-gold: 0 8px 32px -8px hsl(45 70% 50% / 0.3);
-    --shadow-navy: 0 8px 32px -8px hsl(222 60% 18% / 0.25);
-    --shadow-soft: 0 4px 20px -4px hsl(222 60% 18% / 0.1);
+    --glass-bg: 0 0% 100% / 0.85;
+    --glass-border: 0 0% 100% / 0.6;
+    --shadow-gold: 0 8px 32px -8px hsl(45 70% 50% / 0.4);
+    --shadow-navy: 0 8px 32px -8px hsl(222 60% 18% / 0.35);
+    --shadow-soft: 0 4px 20px -4px hsl(222 60% 18% / 0.15);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

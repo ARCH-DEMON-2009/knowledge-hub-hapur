@@ -14,9 +14,9 @@ const GlassCard = ({
   hoverable = true 
 }: GlassCardProps) => {
   const opacities = {
-    strong: "bg-white/50 border-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_32px_rgba(0,0,0,0.06)] backdrop-blur-[20px]",
-    mid: "bg-white/35 border-white/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_8px_24px_rgba(0,0,0,0.05)] backdrop-blur-[16px]",
-    light: "bg-white/25 border-white/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.6),0_4px_12px_rgba(0,0,0,0.04)] backdrop-blur-[10px]"
+    strong: "bg-white/90 border-white/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_32px_rgba(0,0,0,0.08)] backdrop-blur-[24px]",
+    mid: "bg-white/80 border-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_24px_rgba(0,0,0,0.07)] backdrop-blur-[18px]",
+    light: "bg-white/70 border-white/85 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_4px_12px_rgba(0,0,0,0.06)] backdrop-blur-[12px]"
   };
 
   return (

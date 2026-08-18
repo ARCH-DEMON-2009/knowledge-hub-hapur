@@ -50,7 +50,7 @@ const VisitorForm = () => {
   };
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-24 bg-cream/50 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="max-w-xl mx-auto">
           <motion.div
