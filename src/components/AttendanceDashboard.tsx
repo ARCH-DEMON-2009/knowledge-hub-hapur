@@ -4,6 +4,7 @@ import {
   FileDown, QrCode, ShieldAlert, History, Activity, FileSpreadsheet, FileText, Search, Filter, TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import GlassCard from "./GlassCard";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -195,7 +196,7 @@ const AttendanceDashboard = ({ adminFetch }: { adminFetch: (body: object) => Pro
             <div className="space-y-6">
                 {/* Analytics Charts */}
                 <div className="grid md:grid-cols-2 gap-6">
-                    <div className="glass p-6 rounded-2xl shadow-soft border border-white/20">
+                    <GlassCard variant="light" className="p-6">
                         <div className="flex items-center justify-between mb-6">
                             <h3 className="font-display font-bold text-navy flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-gold-dark" /> Attendance Trends (7 Days)

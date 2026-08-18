@@ -1,51 +1,44 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface LibraryStatus {
-  is_open: boolean;
-  opening_time: string;
-  closing_time: string;
-  special_message: string | null;
-}
-
 const LiveStatusBadge = () => {
-  const [status, setStatus] = useState<LibraryStatus | null>(null);
+  const [status, setStatus] = useState<{ is_open: boolean; opening_time: string; closing_time: string } | null>(null);
 
   useEffect(() => {
-    supabase
-      .from("library_status")
-      .select("*")
-      .limit(1)
-      .single()
-      .then(({ data }) => {
-        if (data) setStatus(data);
-      });
+    const fetchStatus = async () => {
+      const { data } = await supabase.from("library_status").select("*").single();
+      if (data) setStatus(data);
+    };
+    fetchStatus();
   }, []);
 
-  if (!status) return null;
+  if (!status) return (
+    <div className="animate-pulse bg-white/30 backdrop-blur-sm border border-white/40 px-4 py-2 rounded-full w-32 h-9" 
+         aria-label="Loading library status" 
+         role="status"
+    />
+  );
+
+  const label = status.is_open ? "LIBRARY OPEN" : "LIBRARY CLOSED";
+  const statusColor = status.is_open ? "bg-emerald-500" : "bg-rose-500";
+  const glowColor = status.is_open ? "shadow-emerald-500/50" : "shadow-rose-500/50";
 
   return (
-    <div className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full border shadow-sm transition-all duration-300 ${
-      status.is_open
-        ? "bg-emerald-950/40 border-emerald-500/50 shadow-emerald-900/20"
-        : "bg-rose-950/40 border-rose-500/50 shadow-rose-900/20"
-    }`}>
+    <div 
+      className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/40 backdrop-blur-md border border-white/60 shadow-lg"
+      role="status"
+      aria-label={`Current library status: ${label}`}
+    >
       <div className="relative flex items-center justify-center">
-        <span className={`absolute w-3 h-3 rounded-full animate-ping opacity-75 ${
-          status.is_open ? "bg-emerald-400" : "bg-rose-400"
-        }`} />
-        <span className={`relative w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)] ${
-          status.is_open ? "bg-emerald-400" : "bg-rose-400"
-        }`} />
+        <span className={`absolute w-2.5 h-2.5 rounded-full animate-ping opacity-75 ${statusColor}`} />
+        <span className={`relative w-2 h-2 rounded-full shadow-lg ${statusColor} ${glowColor}`} />
       </div>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-        <span className={`font-body text-sm font-bold tracking-wide uppercase ${
-          status.is_open ? "text-emerald-400" : "text-rose-400"
-        }`}>
-          {status.is_open ? "Library Open" : "Library Closed"}
+      <div className="flex items-center gap-2">
+        <span className={`text-[11px] font-bold tracking-widest ${status.is_open ? 'text-emerald-700' : 'text-rose-700'}`}>
+          {label}
         </span>
-        <span className="hidden sm:block text-white/30 font-light">|</span>
-        <span className="font-body text-xs font-medium text-slate-200">
+        <span className="w-px h-3 bg-navy/10" aria-hidden="true" />
+        <span className="text-[11px] font-medium text-navy/70">
           {status.opening_time} – {status.closing_time}
         </span>
       </div>

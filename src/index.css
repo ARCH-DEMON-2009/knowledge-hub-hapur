@@ -7,7 +7,7 @@
 @layer base {
   :root {
     --background: 40 30% 96%;
-    --foreground: 222 50% 15%;
+    --foreground: 160 28% 12%; /* #1A2E1F - Deep Green */
 
     --card: 0 0% 100%;
     --card-foreground: 222 50% 15%;
@@ -92,7 +92,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 10%, rgba(180,210,185,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 15% 85%, rgba(210,195,170,0.3) 0%, transparent 55%),
+      linear-gradient(160deg, #F5F0E8 0%, #E8EDE3 45%, #DCE8DC 100%);
+    @apply text-foreground min-h-screen;
     font-family: var(--font-body);
   }
 

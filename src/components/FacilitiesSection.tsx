@@ -4,6 +4,7 @@ import {
   BookOpen, Wifi, Monitor, Printer, Newspaper,
   Droplets, Shield, Armchair, Sun, Volume2, GraduationCap,
 } from "lucide-react";
+import GlassCard from "./GlassCard";
 
 const facilities = [
   { icon: BookOpen, title: "Peaceful Study Areas", desc: "Quiet zones designed for deep focus and concentration", color: "45 80% 50%" },
@@ -78,83 +79,35 @@ const FacilityCard = ({
   index: number;
   inView: boolean;
 }) => {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <motion.div
       custom={index}
       variants={cardVariants}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="relative group cursor-default"
+      className="h-full"
     >
-      {/* Glow effect behind card */}
-      <motion.div
-        animate={{
-          opacity: hovered ? 0.5 : 0,
-          scale: hovered ? 1.05 : 0.95,
-        }}
-        transition={{ duration: 0.4 }}
-        className="absolute -inset-1 rounded-2xl blur-xl"
-        style={{ background: `hsl(${facility.color} / 0.15)` }}
-      />
-
-      <div className="relative glass rounded-2xl p-6 flex items-start gap-4 shadow-soft border border-transparent hover:border-[hsl(var(--gold)/0.25)] transition-all duration-500 overflow-hidden h-full">
-        {/* Subtle gradient overlay on hover */}
-        <motion.div
-          animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--gold)/0.04)] to-transparent pointer-events-none"
-        />
-
+      <GlassCard className="p-6 h-full flex items-start gap-4">
         {/* Icon */}
-        <motion.div
-          animate={{
-            scale: hovered ? 1.1 : 1,
-            rotate: hovered ? 5 : 0,
-          }}
-          transition={{ type: "spring", stiffness: 300, damping: 15 }}
-          className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center relative z-10 transition-colors duration-500"
+        <div 
+          className="w-12 h-12 shrink-0 rounded-xl flex items-center justify-center bg-navy text-gold-light group-hover:bg-gold transition-colors duration-300"
           style={{
-            background: hovered
-              ? `hsl(${facility.color} / 0.2)`
-              : `hsl(var(--navy))`,
+            boxShadow: `0 8px 16px -4px hsl(${facility.color} / 0.2)`
           }}
         >
-          <facility.icon
-            className="w-6 h-6 transition-colors duration-500"
-            style={{
-              color: hovered
-                ? `hsl(${facility.color})`
-                : `hsl(var(--gold-light))`,
-            }}
-          />
-        </motion.div>
+          <facility.icon className="w-6 h-6" />
+        </div>
 
         {/* Content */}
-        <div className="relative z-10 flex-1 min-w-0">
-          <h3 className="font-display text-base font-semibold text-navy group-hover:text-gold-dark transition-colors duration-300">
+        <div className="flex-1 min-w-0">
+          <h3 className="font-display text-lg font-bold text-navy mb-1">
             {facility.title}
           </h3>
-          <p className="font-body text-sm text-muted-foreground leading-relaxed">
+          <p className="font-body text-sm text-navy/70 leading-relaxed">
             {facility.desc}
           </p>
         </div>
-
-        {/* Corner accent */}
-        <motion.div
-          animate={{
-            width: hovered ? 40 : 0,
-            height: hovered ? 40 : 0,
-            opacity: hovered ? 1 : 0,
-          }}
-          transition={{ duration: 0.4 }}
-          className="absolute top-0 right-0 rounded-bl-2xl"
-          style={{ background: `hsl(${facility.color} / 0.12)` }}
-        />
-      </div>
+      </GlassCard>
     </motion.div>
   );
 };
