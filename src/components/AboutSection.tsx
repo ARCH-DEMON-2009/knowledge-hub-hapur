@@ -11,7 +11,12 @@ const AboutSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 bg-navy-dark relative overflow-hidden">
+    <section id="about" className="py-24 relative overflow-hidden">
+      {/* Dynamic atmospheric layer */}
+      <div className="absolute inset-0 bg-navy-dark pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[radial-gradient(circle,rgba(180,210,185,0.15),transparent_70%)] pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[radial-gradient(circle,rgba(210,195,170,0.1),transparent_70%)] pointer-events-none" />
+
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[hsl(var(--gold))] to-transparent" />
       
       <div className="container mx-auto px-4" ref={ref}>
@@ -45,12 +50,22 @@ const AboutSection = () => {
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.3 + i * 0.1 }}
                 >
-                  <GlassCard
-                    title={stat.number}
-                    subtitle={stat.subtitle}
-                    description={stat.label}
-                    icon={stat.icon}
-                  />
+                  <GlassCard className="p-6">
+                    <div className="flex flex-col items-start">
+                      <div className="mb-4 p-3 rounded-xl bg-navy text-gold-light">
+                        {stat.icon}
+                      </div>
+                      <span className="text-slate-300 font-body text-xs font-semibold tracking-widest uppercase mb-1 block">
+                        {stat.subtitle}
+                      </span>
+                      <h3 className="font-display text-2xl font-bold text-white mb-2">
+                        {stat.number}
+                      </h3>
+                      <p className="font-body text-slate-300/90 leading-relaxed text-sm">
+                        {stat.label}
+                      </p>
+                    </div>
+                  </GlassCard>
                 </motion.div>
               ))}
             </div>
